@@ -1,75 +1,2836 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#05070d" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="NEXUS FIT AI" />
-  <meta name="description" content="AI-powered fitness operating system" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0f" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="description" content="NEXUS FIT AI — Premium AI-powered fitness platform" />
+<title>NEXUS FIT AI</title>
 
-  <title>NEXUS FIT AI</title>
+<!-- ============================================================
+     CHART.JS CDN (lazy loaded for Progress page)
+     ============================================================ -->
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
-  <link rel="icon" type="image/png" href="assets/icons/icon-192.png" />
+<!-- ============================================================
+     STYLES — FUTURISTIC CYBER FITNESS UI
+     ============================================================ -->
+<style>
+/* =========================================================
+   DESIGN TOKENS
+   ========================================================= */
+:root {
+  --bg-0: #07070c;
+  --bg-1: #0d0d15;
+  --bg-2: #13131e;
+  --bg-3: #1a1a28;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+  --text-0: #f5f7ff;
+  --text-1: #b8bcd0;
+  --text-2: #7a7e95;
+  --text-3: #4a4d63;
+  --accent: #00d4ff;
+  --accent-2: #0ea5e9;
+  --accent-glow: rgba(0, 212, 255, 0.35);
+  --accent-soft: rgba(14, 165, 233, 0.15);
+  --red: #ff3355;
+  --red-glow: rgba(255, 51, 85, 0.35);
+  --green: #22e39a;
+  --amber: #ffb547;
+  --purple: #a855f7;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --shadow-1: 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-2: 0 8px 32px rgba(0,0,0,0.5);
+  --shadow-glow: 0 0 24px var(--accent-glow);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
 
-  <link rel="stylesheet" href="css/variables.css" />
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/animations.css" />
+/* =========================================================
+   RESET
+   ========================================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, sans-serif;
+  background: var(--bg-0);
+  color: var(--text-0);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+button, input, textarea, select { font-family: inherit; color: inherit; }
+button { background: none; border: none; cursor: pointer; }
+input, textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text-0);
+  width: 100%;
+  font-size: 15px;
+  outline: none;
+  transition: border-color .2s var(--ease), background .2s var(--ease);
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+input::placeholder, textarea::placeholder { color: var(--text-3); }
 
-  <!-- Chart.js loaded async; app degrades gracefully if unavailable -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
-  <script type="module" src="js/app.js" defer></script>
+/* =========================================================
+   GLOBAL BACKGROUND — SUBTLE ANIMATED GRADIENT
+   ========================================================= */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  background:
+    radial-gradient(60% 50% at 20% 10%, rgba(0,212,255,0.08), transparent 60%),
+    radial-gradient(40% 40% at 80% 90%, rgba(255,51,85,0.06), transparent 60%),
+    radial-gradient(50% 50% at 50% 50%, rgba(168,85,247,0.04), transparent 60%);
+  filter: blur(40px);
+  z-index: -2;
+  animation: bgShift 20s ease-in-out infinite alternate;
+}
+@keyframes bgShift {
+  0%   { transform: translate(0,0) scale(1); }
+  100% { transform: translate(-5%,5%) scale(1.1); }
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: -1;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  padding-bottom: calc(84px + var(--safe-bottom));
+}
+
+/* Top header */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 16px 20px 12px;
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(7,7,12,0.72);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 18px; letter-spacing: 0.02em;
+}
+.brand-logo {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  display: grid; place-items: center;
+  box-shadow: 0 0 20px var(--accent-glow);
+  font-size: 16px;
+}
+.brand-text { background: linear-gradient(90deg, #fff, var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.topbar-actions { display: flex; gap: 8px; }
+.icon-btn {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: all .2s var(--ease);
+  color: var(--text-1);
+}
+.icon-btn:hover { background: var(--surface-hover); color: var(--text-0); transform: translateY(-1px); }
+
+/* =========================================================
+   PAGE SECTIONS
+   ========================================================= */
+.page { display: none; padding: 16px 20px 24px; animation: fadeIn .3s var(--ease); }
+.page.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+.page-subtitle { color: var(--text-2); font-size: 14px; margin-bottom: 20px; }
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+.card {
+  background: linear-gradient(180deg, var(--surface), rgba(255,255,255,0.02));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: transform .2s var(--ease), border-color .2s var(--ease);
+}
+.card.glow {
+  box-shadow: 0 0 0 1px var(--accent-soft), 0 8px 32px rgba(0,212,255,0.08);
+  border-color: rgba(0,212,255,0.25);
+}
+.card + .card { margin-top: 12px; }
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* =========================================================
+   HOME — HERO STATS
+   ========================================================= */
+.hero {
+  background:
+    radial-gradient(60% 100% at 0% 0%, rgba(0,212,255,0.18), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  top: -50%; right: -30%;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+  filter: blur(30px);
+  pointer-events: none;
+}
+.hero-greeting { color: var(--text-1); font-size: 14px; margin-bottom: 2px; }
+.hero-name { font-size: 24px; font-weight: 800; margin-bottom: 14px; }
+.hero-name span { color: var(--accent); }
+.hero-ai-msg {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(0,212,255,0.08);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 13px;
+  color: var(--text-1);
+  line-height: 1.5;
+}
+.hero-ai-msg strong { color: var(--accent); font-weight: 600; }
+
+/* Stat grid */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: flex; align-items: center; gap: 6px;
+}
+.stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  margin-top: 4px;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.stat-value .unit { font-size: 14px; color: var(--text-2); font-weight: 600; margin-left: 2px; }
+.stat-bar {
+  height: 4px;
+  background: var(--bg-3);
+  border-radius: 99px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.stat-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 99px;
+  box-shadow: 0 0 8px var(--accent-glow);
+  transition: width .6s var(--ease);
+}
+.stat.accent .stat-value { color: var(--accent); }
+.stat.red .stat-value { color: var(--red); }
+.stat.green .stat-value { color: var(--green); }
+.stat.amber .stat-value { color: var(--amber); }
+
+/* Quick actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+.qa {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 8px;
+  text-align: center;
+  transition: all .2s var(--ease);
+  cursor: pointer;
+}
+.qa:hover { background: var(--surface-hover); transform: translateY(-2px); border-color: var(--border-strong); }
+.qa-icon { font-size: 22px; margin-bottom: 4px; }
+.qa-label { font-size: 11px; color: var(--text-2); font-weight: 500; }
+
+/* =========================================================
+   HYDRATION TRACKER
+   ========================================================= */
+.hydration {
+  display: flex; align-items: center; gap: 14px;
+  padding: 4px 0;
+}
+.hydration-visual {
+  width: 70px; height: 70px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) var(--pct, 0%), var(--bg-3) 0%);
+  display: grid; place-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+.hydration-visual::before {
+  content: "";
+  position: absolute; inset: 6px;
+  background: var(--bg-1);
+  border-radius: 50%;
+}
+.hydration-visual span {
+  position: relative;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--accent);
+}
+.hydration-info { flex: 1; }
+.hydration-info .label { font-size: 13px; color: var(--text-2); }
+.hydration-info .value { font-size: 20px; font-weight: 700; }
+.hydration-controls { display: flex; gap: 6px; margin-top: 8px; }
+.hydration-btn {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all .2s var(--ease);
+}
+.hydration-btn:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: all .2s var(--ease);
+  white-space: nowrap;
+  border: 1px solid transparent;
+  width: 100%;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #001018;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 28px var(--accent-glow); }
+.btn-primary:active { transform: translateY(0); }
+.btn-ghost {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-0);
+}
+.btn-ghost:hover { background: var(--surface-hover); border-color: var(--border-strong); }
+.btn-danger {
+  background: rgba(255,51,85,0.12);
+  border-color: rgba(255,51,85,0.3);
+  color: var(--red);
+}
+.btn-danger:hover { background: rgba(255,51,85,0.2); }
+.btn-sm { padding: 10px 14px; font-size: 13px; }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* =========================================================
+   BOTTOM NAV
+   ========================================================= */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: rgba(13,13,21,0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-top: 1px solid var(--border);
+  padding: 8px 12px calc(8px + var(--safe-bottom));
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  z-index: 100;
+}
+.nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 4px;
+  border-radius: 12px;
+  color: var(--text-2);
+  transition: all .2s var(--ease);
+  font-size: 10px;
+  font-weight: 600;
+}
+.nav-btn svg { width: 22px; height: 22px; stroke-width: 2; }
+.nav-btn:hover { color: var(--text-0); }
+.nav-btn.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.nav-btn.active svg { filter: drop-shadow(0 0 6px var(--accent-glow)); }
+
+/* =========================================================
+   AI COACH — CHAT
+   ========================================================= */
+.ai-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; margin-bottom: 14px;
+}
+.model-switcher {
+  display: flex; gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+  margin-bottom: 14px;
+}
+.model-switcher::-webkit-scrollbar { display: none; }
+.model-chip {
+  padding: 8px 14px;
+  border-radius: 99px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all .2s var(--ease);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.model-chip.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+.badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 99px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.badge-fast { background: rgba(34,227,154,0.15); color: var(--green); }
+.badge-balanced { background: rgba(0,212,255,0.15); color: var(--accent); }
+.badge-think { background: rgba(255,51,85,0.15); color: var(--red); }
+
+.chat-window {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  height: 420px;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+.chat-window::-webkit-scrollbar { width: 4px; }
+.chat-window::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
+
+.msg {
+  max-width: 85%;
+  padding: 12px 14px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+  animation: msgIn .3s var(--ease);
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.msg.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #001018;
+  border-bottom-right-radius: 4px;
+  font-weight: 500;
+}
+.msg.ai {
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+.msg.system {
+  align-self: center;
+  background: rgba(255,51,85,0.1);
+  border: 1px solid rgba(255,51,85,0.25);
+  color: var(--red);
+  font-size: 12px;
+  max-width: 95%;
+  text-align: center;
+}
+.msg img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.typing {
+  display: flex; gap: 4px; padding: 4px 0;
+}
+.typing span {
+  width: 7px; height: 7px;
+  background: var(--text-2);
+  border-radius: 50%;
+  animation: bounce 1.4s infinite var(--ease);
+}
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+.chat-input-row {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+.chat-input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  min-height: 48px;
+  max-height: 120px;
+  resize: none;
+  font-size: 14px;
+}
+.send-btn, .upload-btn {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+  transition: all .2s var(--ease);
+}
+.send-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #001018;
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+.send-btn:hover { transform: translateY(-1px); }
+.send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.upload-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-1);
+}
+.upload-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Quick prompts */
+.quick-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.qp {
+  padding: 8px 12px;
+  border-radius: 99px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-1);
+  cursor: pointer;
+  transition: all .2s var(--ease);
+}
+.qp:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+/* =========================================================
+   WORKOUT SECTION
+   ========================================================= */
+.tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--bg-1);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  transition: all .2s var(--ease);
+  white-space: nowrap;
+}
+.tab.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #001018;
+  box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+.workout-list { display: flex; flex-direction: column; gap: 10px; }
+.exercise-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+.exercise-card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.exercise-name { font-weight: 700; font-size: 15px; }
+.exercise-del {
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  border-radius: 8px;
+  color: var(--text-2);
+  transition: all .2s var(--ease);
+}
+.exercise-del:hover { background: rgba(255,51,85,0.15); color: var(--red); }
+
+.set-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr 1fr auto;
+  gap: 6px;
+  margin-bottom: 6px;
+  align-items: center;
+}
+.set-label {
+  font-size: 12px;
+  color: var(--text-2);
+  font-weight: 600;
+  text-align: center;
+}
+.set-row input {
+  padding: 8px 10px;
+  font-size: 13px;
+  text-align: center;
+}
+.set-del {
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  border-radius: 6px;
+  color: var(--text-3);
+  font-size: 16px;
+}
+.set-del:hover { color: var(--red); background: rgba(255,51,85,0.1); }
+.add-set-btn {
+  width: 100%;
+  padding: 8px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 6px;
+  transition: all .2s var(--ease);
+}
+.add-set-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Timer modal */
+.timer-floating {
+  position: fixed;
+  bottom: calc(96px + var(--safe-bottom));
+  right: 16px;
+  background: linear-gradient(135deg, var(--bg-2), var(--bg-3));
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  box-shadow: 0 8px 32px var(--accent-glow);
+  z-index: 90;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  animation: slideUp .3s var(--ease);
+  min-width: 180px;
+}
+.timer-floating.active { display: flex; }
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.timer-time { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--accent); }
+.timer-stop {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  display: grid; place-items: center;
+}
+
+/* =========================================================
+   NUTRITION
+   ========================================================= */
+.macro-ring-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.macro-ring {
+  text-align: center;
+  padding: 10px 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.ring-svg { width: 60px; height: 60px; transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: var(--bg-3); stroke-width: 6; }
+.ring-fill {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset .6s var(--ease);
+}
+.ring-label { font-size: 10px; color: var(--text-2); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.ring-value { font-size: 14px; font-weight: 700; margin-top: 2px; }
+
+.meal-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.meal-item:last-child { border-bottom: none; }
+.meal-name { font-weight: 500; font-size: 14px; }
+.meal-meta { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+.meal-kcal { font-weight: 700; color: var(--accent); }
+
+/* =========================================================
+   PROGRESS CHARTS
+   ========================================================= */
+.chart-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 12px;
+  height: 220px;
+  position: relative;
+}
+.chart-wrap canvas { width: 100% !important; height: 100% !important; }
+
+.insight {
+  display: flex; gap: 12px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+.insight.warning { border-left-color: var(--amber); }
+.insight.danger { border-left-color: var(--red); }
+.insight.success { border-left-color: var(--green); }
+.insight-icon { font-size: 18px; flex-shrink: 0; }
+.insight-text { font-size: 13px; line-height: 1.5; }
+.insight-title { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+.setting-group {
+  margin-bottom: 18px;
+}
+.setting-group-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-label { font-size: 14px; font-weight: 500; }
+.setting-desc { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+
+/* Toggle */
+.toggle {
+  width: 46px; height: 26px;
+  background: var(--bg-3);
+  border-radius: 99px;
+  position: relative;
+  cursor: pointer;
+  transition: background .2s var(--ease);
+  border: 1px solid var(--border);
+}
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform .2s var(--ease);
+}
+.toggle.on { background: var(--accent); border-color: var(--accent); }
+.toggle.on::after { transform: translateX(20px); }
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn .2s var(--ease);
+}
+.modal-backdrop.active { display: flex; }
+.modal {
+  background: var(--bg-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: modalIn .3s var(--ease);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+.modal-subtitle { font-size: 13px; color: var(--text-2); margin-bottom: 18px; }
+.modal-footer { display: flex; gap: 10px; margin-top: 18px; }
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+.toast-container {
+  position: fixed;
+  top: calc(20px + env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  max-width: calc(100% - 40px);
+}
+.toast {
+  background: var(--bg-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-2);
+  animation: toastIn .3s var(--ease);
+  display: flex; align-items: center; gap: 10px;
+  pointer-events: auto;
+  max-width: 380px;
+}
+.toast.success { border-left: 3px solid var(--green); }
+.toast.error { border-left: 3px solid var(--red); }
+.toast.info { border-left: 3px solid var(--accent); }
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+.hidden { display: none !important; }
+.flex { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.text-sm { font-size: 13px; }
+.text-xs { font-size: 11px; }
+.text-muted { color: var(--text-2); }
+.text-center { text-align: center; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 0%, var(--surface-hover) 50%, var(--surface) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Scrollbar global */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+/* Mobile tweaks */
+@media (max-width: 380px) {
+  .page { padding: 12px 14px 20px; }
+  .page-title { font-size: 22px; }
+  .stat-value { font-size: 24px; }
+  .macro-ring-row { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
 </head>
 <body>
-  <!-- Animated backdrop -->
-  <div class="backdrop-grid" aria-hidden="true"></div>
-  <div class="backdrop-glow" aria-hidden="true"></div>
 
-  <!-- Top bar -->
-  <header class="topbar" role="banner">
-    <div class="topbar__brand">
-      <span class="brand__logo" aria-hidden="true">◆</span>
-      <div class="brand__text">
-        <span class="brand__name">NEXUS FIT</span>
-        <span class="brand__tag">AI OS · v1.0</span>
-      </div>
+<!-- ============================================================
+     APP SHELL
+     ============================================================ -->
+<div class="app" id="app">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">⚡</div>
+      <div class="brand-text">NEXUS FIT AI</div>
     </div>
-    <div class="topbar__status">
-      <span class="level-badge" id="levelBadge">LVL 1</span>
-      <span class="xp-pill" id="xpPill">0 / 100 XP</span>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="streakBtn" title="Streak">
+        <span style="font-size:18px">🔥</span>
+      </button>
+      <button class="icon-btn" id="notifBtn" title="Notifications">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
     </div>
   </header>
 
-  <!-- Main page container -->
-  <main id="appMain" class="app-main" role="main">
-    <!-- Pages injected by router -->
-  </main>
+  <!-- =========================================================
+       HOME SECTION
+       ========================================================= -->
+  <section class="page active" data-page="home">
+    <div class="hero">
+      <div class="hero-greeting">Welcome back</div>
+      <div class="hero-name">Athlete <span>◆</span></div>
+      <div class="hero-ai-msg" id="heroAiMsg">
+        <strong>AI Coach:</strong> <span id="heroAiText">Loading personalized insight…</span>
+      </div>
+    </div>
 
-  <!-- Bottom navigation -->
-  <nav class="bottomnav" role="navigation" aria-label="Primary">
-    <button class="bottomnav__item" data-route="home"     aria-label="Home">
-      <span class="bottomnav__icon">⌂</span><span class="bottomnav__label">Home</span>
+    <div class="stat-grid">
+      <div class="stat accent">
+        <div class="stat-label">🔥 Calories</div>
+        <div class="stat-value"><span id="statCalories">0</span><span class="unit">kcal</span></div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="barCalories" style="width:0%"></div></div>
+      </div>
+      <div class="stat red">
+        <div class="stat-label">⚡ Streak</div>
+        <div class="stat-value"><span id="statStreak">0</span><span class="unit">days</span></div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="barStreak" style="width:0%;background:linear-gradient(90deg,var(--red),var(--amber))"></div></div>
+      </div>
+      <div class="stat green">
+        <div class="stat-label">💧 Hydration</div>
+        <div class="stat-value"><span id="statHydration">0</span><span class="unit">ml</span></div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="barHydration" style="width:0%;background:linear-gradient(90deg,var(--accent),var(--green))"></div></div>
+      </div>
+      <div class="stat amber">
+        <div class="stat-label">⚖️ Weight</div>
+        <div class="stat-value"><span id="statWeight">--</span><span class="unit">kg</span></div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="barWeight" style="width:50%;background:linear-gradient(90deg,var(--amber),var(--purple))"></div></div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="qa" data-goto="workout">
+        <div class="qa-icon">💪</div>
+        <div class="qa-label">Workout</div>
+      </button>
+      <button class="qa" data-goto="nutrition">
+        <div class="qa-icon">🥗</div>
+        <div class="qa-label">Nutrition</div>
+      </button>
+      <button class="qa" data-goto="ai">
+        <div class="qa-icon">🤖</div>
+        <div class="qa-label">AI Coach</div>
+      </button>
+      <button class="qa" data-goto="progress">
+        <div class="qa-icon">📊</div>
+        <div class="qa-label">Progress</div>
+      </button>
+    </div>
+
+    <div class="card mt-16 glow">
+      <div class="card-title">💧 Hydration Tracker</div>
+      <div class="hydration">
+        <div class="hydration-visual" id="hydrationRing" style="--pct:0%">
+          <span id="hydrationPct">0%</span>
+        </div>
+        <div class="hydration-info">
+          <div class="label">Goal: <strong id="hydrationGoal">2500</strong> ml</div>
+          <div class="value"><span id="hydrationCurrent">0</span> / <span id="hydrationGoal2">2500</span> ml</div>
+          <div class="hydration-controls">
+            <button class="hydration-btn" data-water="250">+250ml</button>
+            <button class="hydration-btn" data-water="500">+500ml</button>
+            <button class="hydration-btn" data-water="reset">Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-16">
+      <div class="card-title">🏋️ Latest Workout</div>
+      <div id="latestWorkout">
+        <div class="text-muted text-sm">No workout logged yet. Start your first session!</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       NUTRITION SECTION
+       ========================================================= -->
+  <section class="page" data-page="nutrition">
+    <h1 class="page-title">Nutrition</h1>
+    <p class="page-subtitle">Track macros, hydration & meals</p>
+
+    <div class="macro-ring-row">
+      <div class="macro-ring">
+        <svg class="ring-svg" viewBox="0 0 60 60">
+          <circle class="ring-bg" cx="30" cy="30" r="25"/>
+          <circle class="ring-fill" id="ringCalories" cx="30" cy="30" r="25" stroke="var(--accent)" stroke-dasharray="157" stroke-dashoffset="157"/>
+        </svg>
+        <div class="ring-label">Kcal</div>
+        <div class="ring-value" id="macroCalories">0</div>
+      </div>
+      <div class="macro-ring">
+        <svg class="ring-svg" viewBox="0 0 60 60">
+          <circle class="ring-bg" cx="30" cy="30" r="25"/>
+          <circle class="ring-fill" id="ringProtein" cx="30" cy="30" r="25" stroke="var(--red)" stroke-dasharray="157" stroke-dashoffset="157"/>
+        </svg>
+        <div class="ring-label">Protein</div>
+        <div class="ring-value" id="macroProtein">0g</div>
+      </div>
+      <div class="macro-ring">
+        <svg class="ring-svg" viewBox="0 0 60 60">
+          <circle class="ring-bg" cx="30" cy="30" r="25"/>
+          <circle class="ring-fill" id="ringCarbs" cx="30" cy="30" r="25" stroke="var(--amber)" stroke-dasharray="157" stroke-dashoffset="157"/>
+        </svg>
+        <div class="ring-label">Carbs</div>
+        <div class="ring-value" id="macroCarbs">0g</div>
+      </div>
+      <div class="macro-ring">
+        <svg class="ring-svg" viewBox="0 0 60 60">
+          <circle class="ring-bg" cx="30" cy="30" r="25"/>
+          <circle class="ring-fill" id="ringFats" cx="30" cy="30" r="25" stroke="var(--purple)" stroke-dasharray="157" stroke-dashoffset="157"/>
+        </svg>
+        <div class="ring-label">Fats</div>
+        <div class="ring-value" id="macroFats">0g</div>
+      </div>
+    </div>
+
+    <div class="card mt-16">
+      <div class="card-title flex-between">
+        <span>📝 Today's Meals</span>
+        <button class="btn btn-sm btn-primary" id="addMealBtn" style="width:auto;padding:8px 14px;font-size:12px">+ Add</button>
+      </div>
+      <div id="mealList">
+        <div class="text-muted text-sm text-center" style="padding:20px 0">No meals logged today</div>
+      </div>
+    </div>
+
+    <div class="card mt-16">
+      <div class="card-title">🎯 Daily Goals</div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Calories</div>
+          <div class="setting-desc">Target daily intake</div>
+        </div>
+        <input type="number" id="goalCalories" style="width:90px;text-align:right" />
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Protein</div>
+          <div class="setting-desc">grams per day</div>
+        </div>
+        <input type="number" id="goalProtein" style="width:90px;text-align:right" />
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Carbs</div>
+          <div class="setting-desc">grams per day</div>
+        </div>
+        <input type="number" id="goalCarbs" style="width:90px;text-align:right" />
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Fats</div>
+          <div class="setting-desc">grams per day</div>
+        </div>
+        <input type="number" id="goalFats" style="width:90px;text-align:right" />
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       AI COACH SECTION
+       ========================================================= -->
+  <section class="page" data-page="ai">
+    <div class="ai-header">
+      <div>
+        <h1 class="page-title">AI Coach</h1>
+        <p class="page-subtitle" style="margin:0">Your intelligent fitness companion</p>
+      </div>
+      <button class="icon-btn" id="clearChatBtn" title="Clear chat">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+      </button>
+    </div>
+
+    <div class="model-switcher" id="modelSwitcher">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="chat-window" id="chatWindow">
+      <div class="msg ai">👋 Hey! I'm your AI fitness coach. Ask me anything about training, nutrition, recovery or hypertrophy. I can also analyze meal photos!</div>
+    </div>
+
+    <div class="chat-input-row">
+      <button class="upload-btn" id="uploadBtn" title="Upload meal photo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+      </button>
+      <input type="file" id="fileInput" accept="image/*" class="hidden" />
+      <textarea class="chat-input" id="chatInput" placeholder="Ask your AI coach..." rows="1"></textarea>
+      <button class="send-btn" id="sendBtn" title="Send">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+      </button>
+    </div>
+
+    <div class="quick-prompts" id="quickPrompts">
+      <!-- Populated by JS -->
+    </div>
+  </section>
+
+  <!-- =========================================================
+       WORKOUT SECTION
+       ========================================================= -->
+  <section class="page" data-page="workout">
+    <h1 class="page-title">Workout</h1>
+    <p class="page-subtitle">Log sets, track progressive overload</p>
+
+    <div class="tabs" id="splitTabs">
+      <button class="tab active" data-split="ppl">Push/Pull/Legs</button>
+      <button class="tab" data-split="ul">Upper/Lower</button>
+      <button class="tab" data-split="full">Full Body</button>
+      <button class="tab" data-split="custom">Custom</button>
+    </div>
+
+    <div class="card">
+      <div class="flex-between">
+        <div class="card-title" style="margin:0">
+          <span id="currentSplitName">Push Day</span>
+          <span class="text-xs text-muted" id="workoutTimer">00:00</span>
+        </div>
+        <div class="flex gap-8">
+          <button class="icon-btn" id="timerBtn" title="Rest timer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </button>
+          <button class="icon-btn" id="finishWorkoutBtn" title="Finish & save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="workout-list mt-12" id="exerciseList">
+      <!-- Populated by JS -->
+    </div>
+
+    <button class="btn btn-primary mt-16" id="addExerciseBtn">+ Add Exercise</button>
+
+    <div class="card mt-16">
+      <div class="card-title">📚 Workout History</div>
+      <div id="workoutHistory">
+        <div class="text-muted text-sm text-center" style="padding:12px 0">No completed workouts yet</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       PROGRESS SECTION
+       ========================================================= -->
+  <section class="page" data-page="progress">
+    <h1 class="page-title">Progress</h1>
+    <p class="page-subtitle">AI-powered insights & analytics</p>
+
+    <div class="card">
+      <div class="card-title">🧠 AI Insights</div>
+      <div id="insightsList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="chart-wrap mt-16">
+      <div class="card-title">⚖️ Body Weight</div>
+      <canvas id="chartWeight"></canvas>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="card-title">📈 Workout Volume</div>
+      <canvas id="chartVolume"></canvas>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="card-title">🔥 Calories Trend</div>
+      <canvas id="chartCalories"></canvas>
+    </div>
+
+    <div class="card mt-16">
+      <div class="card-title">➕ Log Weight</div>
+      <div class="flex gap-8">
+        <input type="number" step="0.1" id="weightInput" placeholder="e.g. 75.5" />
+        <button class="btn btn-primary" id="logWeightBtn" style="width:auto;padding:12px 20px">Log</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SETTINGS SECTION
+       ========================================================= -->
+  <section class="page" data-page="settings">
+    <h1 class="page-title">Settings</h1>
+    <p class="page-subtitle">Configure your AI & preferences</p>
+
+    <div class="card">
+      <div class="setting-group">
+        <div class="setting-group-title">🤖 AI Configuration</div>
+        <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:8px">
+          <div>
+            <div class="setting-label">API Key</div>
+            <div class="setting-desc">Groq / OpenAI-compatible API key (stored locally)</div>
+          </div>
+          <input type="password" id="apiKeyInput" placeholder="gsk_..." autocomplete="off" />
+        </div>
+        <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:8px">
+          <div>
+            <div class="setting-label">API Endpoint</div>
+            <div class="setting-desc">Default: Groq. Use any OpenAI-compatible URL</div>
+          </div>
+          <input type="text" id="apiEndpointInput" placeholder="https://api.groq.com/openai/v1/chat/completions" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-12">
+      <div class="setting-group">
+        <div class="setting-group-title">👤 Profile</div>
+        <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:8px">
+          <div class="setting-label">Name</div>
+          <input type="text" id="userNameInput" placeholder="Your name" />
+        </div>
+        <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:8px">
+          <div class="setting-label">Hydration Goal (ml)</div>
+          <input type="number" id="hydrationGoalInput" placeholder="2500" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-12">
+      <div class="setting-group">
+        <div class="setting-group-title">💾 Data Management</div>
+        <button class="btn btn-ghost" id="exportBtn">📤 Export Backup (JSON)</button>
+        <button class="btn btn-ghost mt-8" id="importBtn">📥 Import Backup</button>
+        <input type="file" id="importFileInput" accept=".json,application/json" class="hidden" />
+        <button class="btn btn-danger mt-8" id="resetBtn">⚠️ Reset All Data</button>
+      </div>
+    </div>
+
+    <div class="card mt-12">
+      <div class="setting-group">
+        <div class="setting-group-title">ℹ️ About</div>
+        <div class="text-sm text-muted" style="line-height:1.6">
+          NEXUS FIT AI v1.0<br>
+          Premium AI-powered fitness platform.<br>
+          All data stored locally in your browser.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       BOTTOM NAVIGATION
+       ========================================================= -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-page="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
     </button>
-    <button class="bottomnav__item" data-route="nutrition" aria-label="Nutrition">
-      <span class="bottomnav__icon">◉</span><span class="bottomnav__label">Nutrition</span>
+    <button class="nav-btn" data-page="nutrition">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+      <span>Nutrition</span>
     </button>
-    <button class="bottomnav__item bottomnav__item--accent" data-route="coach" aria-label="AI Coach">
-      <span class="bottomnav__icon">✦</span><span class="bottomnav__label">Coach</span>
+    <button class="nav-btn" data-page="ai">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+      <span>AI Coach</span>
     </button>
-    <button class="bottomnav__item" data-route="progress" aria-label="Progress">
-      <span class="bottomnav__icon">▲</span><span class="bottomnav__label">Progress</span>
+    <button class="nav-btn" data-page="workout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5 17.5 17.5"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>
+      <span>Workout</span>
     </button>
-    <button class="bottomnav__item" data-route="settings" aria-label="Settings">
-      <span class="bottomnav__icon">⚙</span><span class="bottomnav__label">Settings</span>
+    <button class="nav-btn" data-page="progress">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      <span>Progress</span>
+    </button>
+    <button class="nav-btn" data-page="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Settings</span>
     </button>
   </nav>
+</div>
 
-  <!-- Toast container -->
-  <div id="toastHost" class="toast-host" aria-live="polite" aria-atomic="true"></div>
+<!-- ============================================================
+     MODAL CONTAINER
+     ============================================================ -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- FLOATING REST TIMER -->
+<div class="timer-floating" id="timerFloating">
+  <div>
+    <div class="text-xs text-muted">Rest Timer</div>
+    <div class="timer-time" id="timerTime">01:30</div>
+  </div>
+  <button class="timer-stop" id="timerStop">■</button>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT — APPLICATION LOGIC
+     ============================================================ -->
+<script>
+'use strict';
+
+/* =========================================================
+   STORAGE SYSTEM — LocalStorage wrapper with autosave
+   ========================================================= */
+const STORAGE_KEY = 'nexus_fit_ai_v1';
+
+const DEFAULT_STATE = {
+  profile: { name: 'Athlete', hydrationGoal: 2500 },
+  ai: {
+    apiKey: '',
+    endpoint: 'https://api.groq.com/openai/v1/chat/completions',
+    model: 'llama-3.3-70b-versatile',
+    history: []
+  },
+  nutrition: {
+    goals: { calories: 2500, protein: 180, carbs: 300, fats: 80 },
+    days: {} // { 'YYYY-MM-DD': { calories, protein, carbs, fats, hydration, meals: [] } }
+  },
+  workout: {
+    currentSplit: 'ppl',
+    splits: {
+      ppl: { name: 'Push/Pull/Legs', days: ['Push Day', 'Pull Day', 'Legs Day'], current: 0, exercises: [] },
+      ul:  { name: 'Upper/Lower',     days: ['Upper Day', 'Lower Day'],          current: 0, exercises: [] },
+      full:{ name: 'Full Body',       days: ['Full Body'],                       current: 0, exercises: [] },
+      custom: { name: 'Custom Split', days: ['Workout A'],                       current: 0, exercises: [] }
+    },
+    history: [], // completed workouts
+    sessionStart: null
+  },
+  progress: {
+    weightLog: [], // { date, value }
+    streak: 0,
+    lastWorkoutDate: null
+  },
+  settings: { theme: 'dark' }
+};
+
+const Store = {
+  _state: null,
+  _saveTimer: null,
+
+  load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        this._state = structuredClone(DEFAULT_STATE);
+        this.save(true);
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      // Deep merge with defaults for forward-compat
+      this._state = this._deepMerge(structuredClone(DEFAULT_STATE), parsed);
+    } catch (err) {
+      console.error('Store load failed:', err);
+      this._state = structuredClone(DEFAULT_STATE);
+      Toast.show('Failed to load saved data — starting fresh', 'error');
+    }
+  },
+
+  save(immediate = false) {
+    if (immediate) {
+      this._flush();
+      return;
+    }
+    // Debounced autosave (300ms)
+    clearTimeout(this._saveTimer);
+    this._saveTimer = setTimeout(() => this._flush(), 300);
+  },
+
+  _flush() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this._state));
+    } catch (err) {
+      console.error('Store save failed:', err);
+      Toast.show('Storage full — export data to free space', 'error');
+    }
+  },
+
+  get state() { return this._state; },
+
+  _deepMerge(target, source) {
+    for (const key in source) {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        target[key] = target[key] || {};
+        this._deepMerge(target[key], source[key]);
+      } else {
+        target[key] = source[key];
+      }
+    }
+    return target;
+  },
+
+  exportJSON() {
+    const data = JSON.stringify(this._state, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `nexus-fit-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    Toast.show('Backup exported successfully', 'success');
+  },
+
+  importJSON(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        if (!parsed.profile || !parsed.ai || !parsed.nutrition) {
+          throw new Error('Invalid backup format');
+        }
+        this._state = this._deepMerge(structuredClone(DEFAULT_STATE), parsed);
+        this.save(true);
+        App.refreshAll();
+        Toast.show('Backup imported successfully', 'success');
+      } catch (err) {
+        console.error('Import failed:', err);
+        Toast.show('Import failed: ' + err.message, 'error');
+      }
+    };
+    reader.readAsText(file);
+  },
+
+  reset() {
+    this._state = structuredClone(DEFAULT_STATE);
+    this.save(true);
+    App.refreshAll();
+    Toast.show('All data has been reset', 'info');
+  }
+};
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+const Utils = {
+  today() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  },
+  uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  },
+  escapeHTML(str) {
+    if (typeof str !== 'string') return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  },
+  clamp(val, min, max) {
+    return Math.max(min, Math.min(max, val));
+  },
+  formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  },
+  animateCounter(el, target, duration = 600) {
+    const start = parseInt(el.textContent, 10) || 0;
+    const diff = target - start;
+    if (diff === 0) return;
+    const startTime = performance.now();
+    const step = (now) => {
+      const p = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(start + diff * eased);
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  },
+  daysAgo(n) {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+};
+
+/* =========================================================
+   TOAST SYSTEM
+   ========================================================= */
+const Toast = {
+  show(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+    t.innerHTML = `<span style="font-weight:700">${icon}</span><span>${Utils.escapeHTML(message)}</span>`;
+    container.appendChild(t);
+    setTimeout(() => {
+      t.style.transition = 'opacity .3s, transform .3s';
+      t.style.opacity = '0';
+      t.style.transform = 'translateY(-10px)';
+      setTimeout(() => t.remove(), 300);
+    }, duration);
+  }
+};
+
+/* =========================================================
+   MODAL SYSTEM
+   ========================================================= */
+const Modal = {
+  show(title, contentHTML, footerHTML = '') {
+    const backdrop = document.getElementById('modalBackdrop');
+    const content = document.getElementById('modalContent');
+    content.innerHTML = `
+      <div class="modal-title">${Utils.escapeHTML(title)}</div>
+      <div>${contentHTML}</div>
+      ${footerHTML ? `<div class="modal-footer">${footerHTML}</div>` : ''}
+    `;
+    backdrop.classList.add('active');
+  },
+  hide() {
+    document.getElementById('modalBackdrop').classList.remove('active');
+  }
+};
+
+/* =========================================================
+   ROUTER — SPA navigation
+   ========================================================= */
+const Router = {
+  init() {
+    document.querySelectorAll('.nav-btn, .qa').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const page = btn.dataset.page || btn.dataset.goto;
+        if (page) this.go(page);
+      });
+    });
+    // Backdrop close modal
+    document.getElementById('modalBackdrop').addEventListener('click', (e) => {
+      if (e.target.id === 'modalBackdrop') Modal.hide();
+    });
+  },
+  go(pageName) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.querySelector(`.page[data-page="${pageName}"]`);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.page === pageName);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Trigger page-specific refreshes
+    if (pageName === 'progress') ProgressPage.render();
+    if (pageName === 'home') HomePage.refresh();
+    if (pageName === 'nutrition') NutritionPage.refresh();
+  }
+};
+
+/* =========================================================
+   HOME PAGE
+   ========================================================= */
+const HomePage = {
+  refresh() {
+    const s = Store.state;
+    const today = Utils.today();
+    const dayData = s.nutrition.days[today] || { calories: 0, hydration: 0, meals: [] };
+
+    // Name
+    document.querySelector('.hero-name').innerHTML =
+      `${Utils.escapeHTML(s.profile.name || 'Athlete')} <span>◆</span>`;
+
+    // Stats with animation
+    Utils.animateCounter(document.getElementById('statCalories'), dayData.calories || 0);
+    Utils.animateCounter(document.getElementById('statStreak'), s.progress.streak || 0);
+    Utils.animateCounter(document.getElementById('statHydration'), dayData.hydration || 0);
+
+    const lastWeight = s.progress.weightLog.length
+      ? s.progress.weightLog[s.progress.weightLog.length - 1].value
+      : null;
+    document.getElementById('statWeight').textContent = lastWeight ? lastWeight.toFixed(1) : '--';
+
+    // Bars
+    document.getElementById('barCalories').style.width =
+      Utils.clamp((dayData.calories / (s.nutrition.goals.calories || 1)) * 100, 0, 100) + '%';
+    document.getElementById('barStreak').style.width =
+      Utils.clamp(((s.progress.streak || 0) / 30) * 100, 0, 100) + '%';
+    document.getElementById('barHydration').style.width =
+      Utils.clamp(((dayData.hydration || 0) / (s.profile.hydrationGoal || 1)) * 100, 0, 100) + '%';
+
+    // Hydration ring
+    this.updateHydration(dayData.hydration || 0);
+
+    // Latest workout
+    this.renderLatestWorkout();
+
+    // AI motivational message
+    this.renderAiMessage();
+  },
+
+  updateHydration(ml) {
+    const goal = Store.state.profile.hydrationGoal || 2500;
+    const pct = Utils.clamp((ml / goal) * 100, 0, 100);
+    document.getElementById('hydrationRing').style.setProperty('--pct', pct + '%');
+    document.getElementById('hydrationPct').textContent = Math.round(pct) + '%';
+    document.getElementById('hydrationCurrent').textContent = ml;
+    document.getElementById('hydrationGoal').textContent = goal;
+    document.getElementById('hydrationGoal2').textContent = goal;
+  },
+
+  renderLatestWorkout() {
+    const history = Store.state.workout.history;
+    const el = document.getElementById('latestWorkout');
+    if (!history.length) {
+      el.innerHTML = '<div class="text-muted text-sm">No workout logged yet. Start your first session!</div>';
+      return;
+    }
+    const w = history[history.length - 1];
+    const exCount = (w.exercises || []).length;
+    const totalSets = (w.exercises || []).reduce((a, e) => a + (e.sets?.length || 0), 0);
+    el.innerHTML = `
+      <div class="flex-between">
+        <div>
+          <div style="font-weight:700">${Utils.escapeHTML(w.name || 'Workout')}</div>
+          <div class="text-xs text-muted">${Utils.escapeHTML(w.date || '')} · ${Utils.formatTime(w.duration || 0)}</div>
+        </div>
+        <div class="text-sm">
+          <div>${exCount} exercises</div>
+          <div class="text-muted">${totalSets} sets</div>
+        </div>
+      </div>
+    `;
+  },
+
+  renderAiMessage() {
+    const messages = [
+      "Consistency beats intensity. Show up today, even if it's light.",
+      "Progressive overload is the key to hypertrophy — add weight or reps.",
+      "Sleep is your secret weapon. Aim for 7-9 hours for optimal recovery.",
+      "Protein timing matters less than total daily intake. Hit your goal.",
+      "Track everything. What gets measured gets improved.",
+      "Rest days build muscle too. Recovery is part of training.",
+      "Mind-muscle connection: slow the eccentric, feel the contraction.",
+      "Hydration impacts strength by up to 10%. Drink up.",
+      "Volume drives growth, but only if you can recover from it.",
+      "Don't chase soreness — chase progressive overload."
+    ];
+    const idx = new Date().getDate() % messages.length;
+    document.getElementById('heroAiText').textContent = messages[idx];
+  },
+
+  bindHydration() {
+    document.querySelectorAll('[data-water]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.dataset.water;
+        const today = Utils.today();
+        if (!Store.state.nutrition.days[today]) {
+          Store.state.nutrition.days[today] = { calories: 0, protein: 0, carbs: 0, fats: 0, hydration: 0, meals: [] };
+        }
+        const day = Store.state.nutrition.days[today];
+        if (val === 'reset') {
+          day.hydration = 0;
+          Toast.show('Hydration reset', 'info');
+        } else {
+          day.hydration = (day.hydration || 0) + parseInt(val, 10);
+          Toast.show(`+${val}ml logged`, 'success');
+        }
+        Store.save();
+        this.updateHydration(day.hydration);
+        Utils.animateCounter(document.getElementById('statHydration'), day.hydration);
+        document.getElementById('barHydration').style.width =
+          Utils.clamp((day.hydration / (Store.state.profile.hydrationGoal || 1)) * 100, 0, 100) + '%';
+      });
+    });
+  }
+};
+
+/* =========================================================
+   NUTRITION PAGE
+   ========================================================= */
+const NutritionPage = {
+  refresh() {
+    const s = Store.state;
+    const today = Utils.today();
+    const day = s.nutrition.days[today] || { calories: 0, protein: 0, carbs: 0, fats: 0, hydration: 0, meals: [] };
+    const g = s.nutrition.goals;
+
+    // Macro rings
+    this.updateRing('ringCalories', day.calories, g.calories);
+    this.updateRing('ringProtein', day.protein, g.protein);
+    this.updateRing('ringCarbs', day.carbs, g.carbs);
+    this.updateRing('ringFats', day.fats, g.fats);
+
+    document.getElementById('macroCalories').textContent = day.calories || 0;
+    document.getElementById('macroProtein').textContent = (day.protein || 0) + 'g';
+    document.getElementById('macroCarbs').textContent = (day.carbs || 0) + 'g';
+    document.getElementById('macroFats').textContent = (day.fats || 0) + 'g';
+
+    // Goals inputs
+    document.getElementById('goalCalories').value = g.calories;
+    document.getElementById('goalProtein').value = g.protein;
+    document.getElementById('goalCarbs').value = g.carbs;
+    document.getElementById('goalFats').value = g.fats;
+
+    // Meals
+    this.renderMeals(day.meals || []);
+  },
+
+  updateRing(id, current, goal) {
+    const el = document.getElementById(id);
+    const circ = 157; // 2 * PI * 25
+    const pct = Utils.clamp((current || 0) / (goal || 1), 0, 1.5);
+    el.setAttribute('stroke-dashoffset', circ * (1 - Math.min(pct, 1)));
+  },
+
+  renderMeals(meals) {
+    const list = document.getElementById('mealList');
+    if (!meals.length) {
+      list.innerHTML = '<div class="text-muted text-sm text-center" style="padding:20px 0">No meals logged today</div>';
+      return;
+    }
+    list.innerHTML = meals.map(m => `
+      <div class="meal-item">
+        <div style="flex:1;min-width:0">
+          <div class="meal-name truncate">${Utils.escapeHTML(m.name)}</div>
+          <div class="meal-meta">P:${m.protein||0}g · C:${m.carbs||0}g · F:${m.fats||0}g</div>
+        </div>
+        <div style="text-align:right">
+          <div class="meal-kcal">${m.calories||0} kcal</div>
+          <button class="text-xs text-muted" data-del-meal="${m.id}" style="margin-top:4px;background:none;border:none;cursor:pointer;color:var(--red)">Delete</button>
+        </div>
+      </div>
+    `).join('');
+    list.querySelectorAll('[data-del-meal]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.deleteMeal(btn.dataset.delMeal);
+      });
+    });
+  },
+
+  addMeal() {
+    Modal.show('Add Meal', `
+      <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:6px">
+        <label class="text-xs text-muted">Name</label>
+        <input type="text" id="mealNameInput" placeholder="e.g. Chicken & Rice" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><label class="text-xs text-muted">Calories</label><input type="number" id="mealCalInput" placeholder="500" /></div>
+        <div><label class="text-xs text-muted">Protein (g)</label><input type="number" id="mealPInput" placeholder="40" /></div>
+        <div><label class="text-xs text-muted">Carbs (g)</label><input type="number" id="mealCInput" placeholder="60" /></div>
+        <div><label class="text-xs text-muted">Fats (g)</label><input type="number" id="mealFInput" placeholder="15" /></div>
+      </div>
+    `, `
+      <button class="btn btn-ghost" id="mealCancel">Cancel</button>
+      <button class="btn btn-primary" id="mealSave">Add Meal</button>
+    `);
+    document.getElementById('mealCancel').onclick = () => Modal.hide();
+    document.getElementById('mealSave').onclick = () => {
+      const name = document.getElementById('mealNameInput').value.trim();
+      if (!name) { Toast.show('Enter meal name', 'error'); return; }
+      const meal = {
+        id: Utils.uid(),
+        name,
+        calories: parseInt(document.getElementById('mealCalInput').value, 10) || 0,
+        protein: parseInt(document.getElementById('mealPInput').value, 10) || 0,
+        carbs: parseInt(document.getElementById('mealCInput').value, 10) || 0,
+        fats: parseInt(document.getElementById('mealFInput').value, 10) || 0
+      };
+      const today = Utils.today();
+      if (!Store.state.nutrition.days[today]) {
+        Store.state.nutrition.days[today] = { calories: 0, protein: 0, carbs: 0, fats: 0, hydration: 0, meals: [] };
+      }
+      const day = Store.state.nutrition.days[today];
+      day.meals = day.meals || [];
+      day.meals.push(meal);
+      day.calories = (day.calories || 0) + meal.calories;
+      day.protein = (day.protein || 0) + meal.protein;
+      day.carbs = (day.carbs || 0) + meal.carbs;
+      day.fats = (day.fats || 0) + meal.fats;
+      Store.save();
+      Modal.hide();
+      this.refresh();
+      HomePage.refresh();
+      Toast.show('Meal added', 'success');
+    };
+  },
+
+  deleteMeal(id) {
+    const today = Utils.today();
+    const day = Store.state.nutrition.days[today];
+    if (!day || !day.meals) return;
+    const meal = day.meals.find(m => m.id === id);
+    if (!meal) return;
+    day.meals = day.meals.filter(m => m.id !== id);
+    day.calories = Math.max(0, (day.calories || 0) - meal.calories);
+    day.protein = Math.max(0, (day.protein || 0) - meal.protein);
+    day.carbs = Math.max(0, (day.carbs || 0) - meal.carbs);
+    day.fats = Math.max(0, (day.fats || 0) - meal.fats);
+    Store.save();
+    this.refresh();
+    HomePage.refresh();
+    Toast.show('Meal removed', 'info');
+  },
+
+  bindGoals() {
+    ['Calories','Protein','Carbs','Fats'].forEach(key => {
+      const input = document.getElementById('goal' + key);
+      input.addEventListener('change', () => {
+        const k = key.toLowerCase();
+        Store.state.nutrition.goals[k] = parseInt(input.value, 10) || 0;
+        Store.save();
+        this.refresh();
+        Toast.show(`${key} goal updated`, 'success');
+      });
+    });
+  }
+};
+
+/* =========================================================
+   AI COACH — Groq / OpenAI-compatible API
+   ========================================================= */
+const AICoach = {
+  models: [
+    { id: 'llama-3.1-8b-instant',     label: 'FAST ⚡',       badge: 'FAST',      badgeClass: 'badge-fast' },
+    { id: 'llama-3.3-70b-versatile',  label: 'BALANCED 🧠',   badge: 'BALANCED',  badgeClass: 'badge-balanced' },
+    { id: 'openai/gpt-oss-20b',       label: 'GPT-OSS 20B 🧠', badge: 'BALANCED',  badgeClass: 'badge-balanced' },
+    { id: 'openai/gpt-oss-120b',      label: 'THINK ☢️',       badge: 'THINK',     badgeClass: 'badge-think' }
+  ],
+
+  systemPrompt: `You are NEXUS FIT AI — an elite fitness and hypertrophy AI assistant built for evidence-based guidance.
+
+ONLY answer questions related to:
+- Gym training, workout programming, exercise selection
+- Muscle growth (hypertrophy) and strength training
+- Biomechanics and exercise form
+- Recovery, sleep, and rest protocols
+- Nutrition, calories, macros, meal planning
+- Fitness science, supplements, periodization
+
+REFUSE (politely) any requests about:
+- Homework, academic subjects unrelated to fitness
+- Coding, programming, tech support
+- Medical diagnoses (refer to a doctor)
+- Illegal content or harmful activities
+- Politics, entertainment, gossip, or unrelated topics
+
+When refusing, briefly explain you're a fitness-only assistant and suggest asking a fitness-related question instead.
+
+Style: concise, direct, science-backed, motivating. Use bullet points when helpful. Cite general principles, not specific studies unless asked.`,
+
+  quickPrompts: [
+    'What should I train today?',
+    'Analyze my workout',
+    'Bulk or cut?',
+    'Is this meal good post-workout?',
+    'How many calories should I eat?',
+    'Improve chest growth',
+    'Best hypertrophy range?',
+    'Analyze recovery',
+    'Home workout ideas',
+    'Am I overtraining?'
+  ],
+
+  init() {
+    this.renderModelSwitcher();
+    this.renderQuickPrompts();
+    this.renderHistory();
+    this.bindEvents();
+  },
+
+  renderModelSwitcher() {
+    const container = document.getElementById('modelSwitcher');
+    const current = Store.state.ai.model;
+    container.innerHTML = this.models.map(m => `
+      <button class="model-chip ${m.id === current ? 'active' : ''}" data-model="${m.id}">
+        ${Utils.escapeHTML(m.label)}
+      </button>
+    `).join('');
+    container.querySelectorAll('.model-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        Store.state.ai.model = chip.dataset.model;
+        Store.save();
+        container.querySelectorAll('.model-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const model = this.models.find(m => m.id === chip.dataset.model);
+        Toast.show(`Model: ${model.badge}`, 'info');
+      });
+    });
+  },
+
+  renderQuickPrompts() {
+    const container = document.getElementById('quickPrompts');
+    container.innerHTML = this.quickPrompts.map(q => `
+      <button class="qp" data-prompt="${Utils.escapeHTML(q)}">${Utils.escapeHTML(q)}</button>
+    `).join('');
+    container.querySelectorAll('.qp').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('chatInput').value = btn.dataset.prompt;
+        this.send();
+      });
+    });
+  },
+
+  renderHistory() {
+    const window_ = document.getElementById('chatWindow');
+    // Keep welcome message; append history
+    const history = Store.state.ai.history || [];
+    history.forEach(msg => {
+      if (msg.role === 'user') this.appendMessage('user', msg.content, msg.image, false);
+      else if (msg.role === 'assistant') this.appendMessage('ai', msg.content, null, false);
+    });
+    this.scrollChat();
+  },
+
+  appendMessage(type, text, imageBase64 = null, save = true, role = null) {
+    const window_ = document.getElementById('chatWindow');
+    const div = document.createElement('div');
+    div.className = `msg ${type}`;
+    let html = '';
+    if (imageBase64) {
+      html += `<img src="${imageBase64}" alt="Uploaded meal" />`;
+    }
+    html += Utils.escapeHTML(text || '').replace(/\n/g, '<br>');
+    div.innerHTML = html;
+    window_.appendChild(div);
+    this.scrollChat();
+
+    if (save) {
+      Store.state.ai.history = Store.state.ai.history || [];
+      Store.state.ai.history.push({
+        role: role || (type === 'user' ? 'user' : 'assistant'),
+        content: text,
+        image: imageBase64 ? imageBase64.slice(0, 100) + '…' : null
+      });
+      // Cap history
+      if (Store.state.ai.history.length > 50) {
+        Store.state.ai.history = Store.state.ai.history.slice(-50);
+      }
+      Store.save();
+    }
+    return div;
+  },
+
+  appendSystem(message) {
+    const window_ = document.getElementById('chatWindow');
+    const div = document.createElement('div');
+    div.className = 'msg system';
+    div.innerHTML = Utils.escapeHTML(message);
+    window_.appendChild(div);
+    this.scrollChat();
+  },
+
+  showTyping() {
+    const window_ = document.getElementById('chatWindow');
+    const div = document.createElement('div');
+    div.className = 'msg ai';
+    div.id = 'typingIndicator';
+    div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+    window_.appendChild(div);
+    this.scrollChat();
+  },
+
+  hideTyping() {
+    const el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+  },
+
+  scrollChat() {
+    const w = document.getElementById('chatWindow');
+    w.scrollTop = w.scrollHeight;
+  },
+
+  async send(imageBase64 = null) {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text && !imageBase64) return;
+
+    const apiKey = Store.state.ai.apiKey;
+    if (!apiKey) {
+      this.appendSystem('⚠️ Please add your API key in Settings to use AI Coach');
+      return;
+    }
+
+    if (text) this.appendMessage('user', text, imageBase64);
+    else if (imageBase64) this.appendMessage('user', 'Analyze this meal', imageBase64);
+    input.value = '';
+    input.style.height = 'auto';
+
+    this.showTyping();
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn.disabled = true;
+
+    try {
+      const response = await this.callAPI(text, imageBase64);
+      this.hideTyping();
+      this.appendMessage('ai', response);
+    } catch (err) {
+      this.hideTyping();
+      console.error('AI API error:', err);
+      this.appendSystem(`❌ Error: ${err.message}`);
+    } finally {
+      sendBtn.disabled = false;
+    }
+  },
+
+  async callAPI(userText, imageBase64) {
+    const endpoint = Store.state.ai.endpoint;
+    const model = Store.state.ai.model;
+    const apiKey = Store.state.ai.apiKey;
+
+    // Build message history (last 10 for context)
+    const history = (Store.state.ai.history || []).slice(-10).map(h => ({
+      role: h.role,
+      content: h.content
+    }));
+
+    let userContent;
+    if (imageBase64 && model.includes('vision')) {
+      userContent = [
+        { type: 'text', text: userText || 'Analyze this meal: estimate calories, macros, and whether it\'s good for pre/post-workout, bulk or cut.' },
+        { type: 'image_url', image_url: { url: imageBase64 } }
+      ];
+    } else if (imageBase64) {
+      userContent = (userText ? userText + '\n\n' : '') + '[Image uploaded — describe what you see in the meal and estimate calories/macros]';
+    } else {
+      userContent = userText;
+    }
+
+    const messages = [
+      { role: 'system', content: this.systemPrompt },
+      ...history,
+      { role: 'user', content: userContent }
+    ];
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 45000);
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature: 0.7,
+          max_tokens: 1024
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeout);
+
+      if (!res.ok) {
+        const errBody = await res.text().catch(() => '');
+        throw new Error(`HTTP ${res.status}: ${errBody.slice(0, 120)}`);
+      }
+
+      const data = await res.json();
+      const content = data?.choices?.[0]?.message?.content;
+      if (!content) throw new Error('Empty response from model');
+      return content.trim();
+    } catch (err) {
+      clearTimeout(timeout);
+      if (err.name === 'AbortError') throw new Error('Request timed out (45s)');
+      throw err;
+    }
+  },
+
+  async uploadPhoto() {
+    const input = document.getElementById('fileInput');
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      Toast.show('Please select an image file', 'error');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      Toast.show('Image too large (max 5MB)', 'error');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target.result;
+      const prompt = 'Analyze this meal photo. Estimate: total calories, protein/carbs/fats (grams), and whether it\'s suitable as: pre-workout, post-workout, bulk-friendly, cut-friendly. Be specific.';
+      this.send(base64);
+    };
+    reader.onerror = () => Toast.show('Failed to read image', 'error');
+    reader.readAsDataURL(file);
+    input.value = '';
+  },
+
+  clearChat() {
+    Store.state.ai.history = [];
+    Store.save();
+    const w = document.getElementById('chatWindow');
+    w.innerHTML = '<div class="msg ai">👋 Hey! I\'m your AI fitness coach. Ask me anything about training, nutrition, recovery or hypertrophy. I can also analyze meal photos!</div>';
+    Toast.show('Chat cleared', 'info');
+  },
+
+  bindEvents() {
+    const input = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('fileInput');
+    const clearBtn = document.getElementById('clearChatBtn');
+
+    sendBtn.addEventListener('click', () => this.send());
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        this.send();
+      }
+    });
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    });
+    uploadBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => this.uploadPhoto());
+    clearBtn.addEventListener('click', () => {
+      Modal.show('Clear Chat', '<p class="text-sm text-muted">Delete all chat history?</p>',
+        `<button class="btn btn-ghost" onclick="Modal.hide()">Cancel</button>
+         <button class="btn btn-danger" id="confirmClear">Clear</button>`);
+      document.getElementById('confirmClear').onclick = () => {
+        this.clearChat();
+        Modal.hide();
+      };
+    });
+  }
+};
+
+/* =========================================================
+   WORKOUT PAGE
+   ========================================================= */
+const WorkoutPage = {
+  _sessionTimer: null,
+  _sessionSeconds: 0,
+  _restTimer: null,
+  _restSeconds: 90,
+
+  init() {
+    this.bindTabs();
+    this.bindAddExercise();
+    this.bindTimerBtn();
+    this.bindTimerStop();
+    this.bindFinish();
+    this.render();
+  },
+
+  bindTabs() {
+    document.getElementById('splitTabs').addEventListener('click', (e) => {
+      const tab = e.target.closest('.tab');
+      if (!tab) return;
+      document.querySelectorAll('#splitTabs .tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      Store.state.workout.currentSplit = tab.dataset.split;
+      Store.save();
+      this.render();
+    });
+  },
+
+  render() {
+    const split = Store.state.workout.currentSplit;
+    const splitData = Store.state.workout.splits[split];
+    document.getElementById('currentSplitName').textContent =
+      splitData.days[splitData.current % splitData.days.length];
+
+    // Exercises
+    const list = document.getElementById('exerciseList');
+    const exercises = splitData.exercises || [];
+    if (!exercises.length) {
+      list.innerHTML = '<div class="card text-muted text-sm text-center" style="padding:24px">No exercises yet. Add your first one below.</div>';
+    } else {
+      list.innerHTML = exercises.map((ex, idx) => this.renderExercise(ex, idx)).join('');
+      this.bindExerciseEvents();
+    }
+
+    this.renderHistory();
+  },
+
+  renderExercise(ex, idx) {
+    const setsHTML = (ex.sets || []).map((s, sIdx) => `
+      <div class="set-row">
+        <div class="set-label">${sIdx + 1}</div>
+        <input type="number" placeholder="kg" value="${s.weight || ''}" data-set-field="weight" data-ex="${idx}" data-set="${sIdx}" />
+        <input type="number" placeholder="reps" value="${s.reps || ''}" data-set-field="reps" data-ex="${idx}" data-set="${sIdx}" />
+        <input type="text" placeholder="notes" value="${Utils.escapeHTML(s.notes || '')}" data-set-field="notes" data-ex="${idx}" data-set="${sIdx}" />
+        <button class="set-del" data-del-set="${idx}-${sIdx}">×</button>
+      </div>
+    `).join('');
+
+    return `
+      <div class="exercise-card" data-ex-idx="${idx}">
+        <div class="exercise-card-header">
+          <input type="text" class="exercise-name" value="${Utils.escapeHTML(ex.name)}" data-ex-name="${idx}"
+            style="background:transparent;border:none;font-weight:700;padding:0;font-size:15px;width:100%" />
+          <button class="exercise-del" data-del-ex="${idx}" title="Remove">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
+        <div class="set-row" style="margin-bottom:8px">
+          <div class="set-label">SET</div>
+          <div class="set-label">KG</div>
+          <div class="set-label">REPS</div>
+          <div class="set-label">NOTE</div>
+          <div></div>
+        </div>
+        ${setsHTML}
+        <button class="add-set-btn" data-add-set="${idx}">+ Add Set</button>
+      </div>
+    `;
+  },
+
+  bindExerciseEvents() {
+    // Use event delegation on list container
+    const list = document.getElementById('exerciseList');
+
+    list.querySelectorAll('[data-ex-name]').forEach(input => {
+      input.addEventListener('change', () => {
+        const idx = parseInt(input.dataset.exName, 10);
+        const split = Store.state.workout.currentSplit;
+        Store.state.workout.splits[split].exercises[idx].name = input.value.trim() || 'Exercise';
+        Store.save();
+      });
+    });
+
+    list.querySelectorAll('[data-set-field]').forEach(input => {
+      input.addEventListener('change', () => {
+        const eIdx = parseInt(input.dataset.ex, 10);
+        const sIdx = parseInt(input.dataset.set, 10);
+        const field = input.dataset.setField;
+        const split = Store.state.workout.currentSplit;
+        const set = Store.state.workout.splits[split].exercises[eIdx].sets[sIdx];
+        if (field === 'notes') set.notes = input.value;
+        else set[field] = parseFloat(input.value) || 0;
+        Store.save();
+      });
+    });
+
+    list.querySelectorAll('[data-del-ex]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.delEx, 10);
+        const split = Store.state.workout.currentSplit;
+        Store.state.workout.splits[split].exercises.splice(idx, 1);
+        Store.save();
+        this.render();
+      });
+    });
+
+    list.querySelectorAll('[data-del-set]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const [eIdx, sIdx] = btn.dataset.delSet.split('-').map(n => parseInt(n, 10));
+        const split = Store.state.workout.currentSplit;
+        Store.state.workout.splits[split].exercises[eIdx].sets.splice(sIdx, 1);
+        Store.save();
+        this.render();
+      });
+    });
+
+    list.querySelectorAll('[data-add-set]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.addSet, 10);
+        const split = Store.state.workout.currentSplit;
+        Store.state.workout.splits[split].exercises[idx].sets.push({ weight: 0, reps: 0, notes: '' });
+        Store.save();
+        this.render();
+      });
+    });
+  },
+
+  bindAddExercise() {
+    document.getElementById('addExerciseBtn').addEventListener('click', () => {
+      const split = Store.state.workout.currentSplit;
+      const splitData = Store.state.workout.splits[split];
+      splitData.exercises = splitData.exercises || [];
+      splitData.exercises.push({
+        id: Utils.uid(),
+        name: 'New Exercise',
+        sets: [{ weight: 0, reps: 0, notes: '' }]
+      });
+      // Start session timer if not running
+      if (!this._sessionTimer) this.startSession();
+      Store.save();
+      this.render();
+    });
+  },
+
+  startSession() {
+    Store.state.workout.sessionStart = Date.now();
+    this._sessionSeconds = 0;
+    this._sessionTimer = setInterval(() => {
+      this._sessionSeconds++;
+      document.getElementById('workoutTimer').textContent = Utils.formatTime(this._sessionSeconds);
+    }, 1000);
+  },
+
+  stopSession() {
+    if (this._sessionTimer) {
+      clearInterval(this._sessionTimer);
+      this._sessionTimer = null;
+    }
+    const duration = this._sessionSeconds;
+    this._sessionSeconds = 0;
+    document.getElementById('workoutTimer').textContent = '00:00';
+    return duration;
+  },
+
+  bindTimerBtn() {
+    document.getElementById('timerBtn').addEventListener('click', () => {
+      this.startRestTimer(90);
+    });
+  },
+
+  startRestTimer(seconds) {
+    if (this._restTimer) clearInterval(this._restTimer);
+    this._restSeconds = seconds;
+    const floating = document.getElementById('timerFloating');
+    const timeEl = document.getElementById('timerTime');
+    floating.classList.add('active');
+    timeEl.textContent = Utils.formatTime(this._restSeconds);
+    this._restTimer = setInterval(() => {
+      this._restSeconds--;
+      timeEl.textContent = Utils.formatTime(Math.max(0, this._restSeconds));
+      if (this._restSeconds <= 0) {
+        clearInterval(this._restTimer);
+        this._restTimer = null;
+        floating.classList.remove('active');
+        Toast.show('Rest complete! 💪', 'success');
+      }
+    }, 1000);
+  },
+
+  bindTimerStop() {
+    document.getElementById('timerStop').addEventListener('click', () => {
+      if (this._restTimer) clearInterval(this._restTimer);
+      this._restTimer = null;
+      document.getElementById('timerFloating').classList.remove('active');
+    });
+  },
+
+  bindFinish() {
+    document.getElementById('finishWorkoutBtn').addEventListener('click', () => {
+      const split = Store.state.workout.currentSplit;
+      const splitData = Store.state.workout.splits[split];
+      const dayName = splitData.days[splitData.current % splitData.days.length];
+      const exercises = (splitData.exercises || []).filter(e => e.sets && e.sets.length > 0);
+
+      if (!exercises.length) {
+        Toast.show('Add at least one exercise with sets', 'error');
+        return;
+      }
+
+      Modal.show('Finish Workout',
+        `<p class="text-sm text-muted">Save <strong>${Utils.escapeHTML(dayName)}</strong> with ${exercises.length} exercises?</p>`,
+        `<button class="btn btn-ghost" onclick="Modal.hide()">Cancel</button>
+         <button class="btn btn-primary" id="confirmFinish">Save</button>`);
+
+      document.getElementById('confirmFinish').onclick = () => {
+        const duration = this.stopSession();
+        const workout = {
+          id: Utils.uid(),
+          name: dayName,
+          split,
+          date: new Date().toISOString(),
+          duration,
+          exercises: JSON.parse(JSON.stringify(exercises))
+        };
+        Store.state.workout.history.push(workout);
+        // Advance split day
+        splitData.current = (splitData.current + 1) % splitData.days.length;
+        // Clear current exercises (keep template for next time)
+        splitData.exercises = [];
+        // Update streak
+        this.updateStreak();
+        Store.state.workout.sessionStart = null;
+        Store.save();
+        Modal.hide();
+        this.render();
+        HomePage.refresh();
+        Toast.show('Workout saved! 🔥', 'success');
+      };
+    });
+  },
+
+  updateStreak() {
+    const today = Utils.today();
+    const last = Store.state.progress.lastWorkoutDate;
+    if (last === today) return; // already logged today
+    if (!last) {
+      Store.state.progress.streak = 1;
+    } else {
+      const daysDiff = Math.round((new Date(today) - new Date(last)) / 86400000);
+      if (daysDiff === 1) Store.state.progress.streak = (Store.state.progress.streak || 0) + 1;
+      else if (daysDiff > 1) Store.state.progress.streak = 1;
+    }
+    Store.state.progress.lastWorkoutDate = today;
+  },
+
+  renderHistory() {
+    const history = Store.state.workout.history;
+    const el = document.getElementById('workoutHistory');
+    if (!history.length) {
+      el.innerHTML = '<div class="text-muted text-sm text-center" style="padding:12px 0">No completed workouts yet</div>';
+      return;
+    }
+    const last5 = history.slice(-5).reverse();
+    el.innerHTML = last5.map(w => {
+      const totalSets = (w.exercises || []).reduce((a, e) => a + (e.sets?.length || 0), 0);
+      const d = new Date(w.date);
+      const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return `
+        <div class="meal-item">
+          <div style="flex:1">
+            <div class="meal-name">${Utils.escapeHTML(w.name)}</div>
+            <div class="meal-meta">${dateStr} · ${Utils.formatTime(w.duration || 0)} · ${totalSets} sets</div>
+          </div>
+          <div class="meal-kcal">${(w.exercises || []).length} ex</div>
+        </div>
+      `;
+    }).join('');
+  }
+};
+
+/* =========================================================
+   PROGRESS PAGE — Charts & Insights
+   ========================================================= */
+const ProgressPage = {
+  charts: {},
+
+  render() {
+    this.renderInsights();
+    // Wait for Chart.js to load
+    if (typeof Chart === 'undefined') {
+      setTimeout(() => this.render(), 200);
+      return;
+    }
+    this.renderWeightChart();
+    this.renderVolumeChart();
+    this.renderCaloriesChart();
+  },
+
+  renderInsights() {
+    const s = Store.state;
+    const insights = [];
+    const today = Utils.today();
+    const day = s.nutrition.days[today] || {};
+    const history = s.workout.history;
+
+    // Strength progression
+    if (history.length >= 3) {
+      insights.push({ type: 'success', icon: '💪', title: 'Strength Progression', text: 'Training consistency is building. Keep progressive overload in focus.' });
+    }
+    // Streak
+    if ((s.progress.streak || 0) >= 3) {
+      insights.push({ type: 'success', icon: '🔥', title: `${s.progress.streak}-day streak!`, text: 'Consistency is your superpower. Keep the momentum going.' });
+    } else if (s.progress.streak === 0) {
+      insights.push({ type: 'warning', icon: '⚠️', title: 'Start your streak', text: 'Log a workout today to begin building momentum.' });
+    }
+    // Recovery
+    if (history.length > 5) {
+      const last = history.slice(-5);
+      const avgSets = last.reduce((a, w) => a + (w.exercises || []).reduce((b, e) => b + (e.sets?.length || 0), 0), 0) / 5;
+      if (avgSets > 25) {
+        insights.push({ type: 'warning', icon: '😴', title: 'Recovery may be insufficient', text: `Average ${avgSets.toFixed(0)} sets per session. Consider a deload week.` });
+      }
+    }
+    // Calories
+    if (day.calories > 0 && s.nutrition.goals.calories) {
+      const pct = (day.calories / s.nutrition.goals.calories) * 100;
+      if (pct < 70) insights.push({ type: 'warning', icon: '🍽️', title: 'Under-eating today', text: `You've logged ${Math.round(pct)}% of your calorie goal. Fuel your training.` });
+      else if (pct >= 95 && pct <= 110) insights.push({ type: 'success', icon: '🎯', title: 'On target', text: 'Great job hitting your calorie goal today.' });
+    }
+    // Chest volume
+    if (history.length >= 5) {
+      const last5 = history.slice(-5);
+      const chestSets = last5.reduce((a, w) => a + (w.exercises || []).filter(e => /chest|bench|press|fly/i.test(e.name)).reduce((b, e) => b + (e.sets?.length || 0), 0), 0);
+      if (chestSets < 5) insights.push({ type: 'warning', icon: '💥', title: 'Chest volume appears low', text: `Only ${chestSets} chest sets in last 5 workouts. Add pressing movements.` });
+    }
+
+    if (!insights.length) {
+      insights.push({ type: 'info', icon: '📊', title: 'Keep logging', text: 'More data = better insights. Track workouts, meals, and weight.' });
+    }
+
+    document.getElementById('insightsList').innerHTML = insights.map(i => `
+      <div class="insight ${i.type}">
+        <div class="insight-icon">${i.icon}</div>
+        <div class="insight-text">
+          <div class="insight-title">${Utils.escapeHTML(i.title)}</div>
+          <div>${Utils.escapeHTML(i.text)}</div>
+        </div>
+      </div>
+    `).join('');
+  },
+
+  _chartDefaults() {
+    return {
+      color: '#b8bcd0',
+      borderColor: 'rgba(255,255,255,0.08)',
+      font: { family: '-apple-system, BlinkMacSystemFont, "Inter", sans-serif' }
+    };
+  },
+
+  renderWeightChart() {
+    const logs = Store.state.progress.weightLog.slice(-14);
+    const labels = logs.map(l => { const d = new Date(l.date); return `${d.getMonth()+1}/${d.getDate()}`; });
+    const data = logs.map(l => l.value);
+    this._drawChart('chartWeight', {
+      type: 'line',
+      data: {
+        labels: labels.length ? labels : ['—'],
+        datasets: [{
+          label: 'Weight (kg)',
+          data: data.length ? data : [0],
+          borderColor: '#00d4ff',
+          backgroundColor: 'rgba(0,212,255,0.15)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#00d4ff',
+          borderWidth: 2
+        }]
+      }
+    });
+  },
+
+  renderVolumeChart() {
+    const history = Store.state.workout.history.slice(-14);
+    const labels = history.map(w => { const d = new Date(w.date); return `${d.getMonth()+1}/${d.getDate()}`; });
+    const data = history.map(w => (w.exercises || []).reduce((a, e) => {
+      return a + (e.sets || []).reduce((b, s) => b + (s.weight || 0) * (s.reps || 0), 0);
+    }, 0));
+    this._drawChart('chartVolume', {
+      type: 'bar',
+      data: {
+        labels: labels.length ? labels : ['—'],
+        datasets: [{
+          label: 'Volume (kg·reps)',
+          data: data.length ? data : [0],
+          backgroundColor: 'rgba(168,85,247,0.6)',
+          borderColor: '#a855f7',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      }
+    });
+  },
+
+  renderCaloriesChart() {
+    const days = [];
+    for (let i = 13; i >= 0; i--) {
+      const key = Utils.daysAgo(i);
+      const d = new Date(key);
+      days.push({ label: `${d.getMonth()+1}/${d.getDate()}`, val: (Store.state.nutrition.days[key]?.calories) || 0 });
+    }
+    this._drawChart('chartCalories', {
+      type: 'line',
+      data: {
+        labels: days.map(d => d.label),
+        datasets: [{
+          label: 'Calories',
+          data: days.map(d => d.val),
+          borderColor: '#ff3355',
+          backgroundColor: 'rgba(255,51,85,0.12)',
+          fill: true,
+          tension: 0.35,
+          pointRadius: 3,
+          pointBackgroundColor: '#ff3355',
+          borderWidth: 2
+        }]
+      }
+    });
+  },
+
+  _drawChart(canvasId, config) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || typeof Chart === 'undefined') return;
+    // Destroy existing
+    if (this.charts[canvasId]) this.charts[canvasId].destroy();
+
+    const common = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(13,13,21,0.95)',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          titleColor: '#f5f7ff',
+          bodyColor: '#b8bcd0',
+          padding: 10,
+          cornerRadius: 8
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#7a7e95', font: { size: 10 } }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#7a7e95', font: { size: 10 } },
+          beginAtZero: true
+        }
+      }
+    };
+
+    this.charts[canvasId] = new Chart(canvas, {
+      ...config,
+      options: { ...common, ...(config.options || {}) }
+    });
+  },
+
+  logWeight() {
+    const input = document.getElementById('weightInput');
+    const val = parseFloat(input.value);
+    if (!val || val < 20 || val > 300) {
+      Toast.show('Enter a valid weight (20-300 kg)', 'error');
+      return;
+    }
+    Store.state.progress.weightLog.push({ date: new Date().toISOString(), value: val });
+    // Keep last 90
+    if (Store.state.progress.weightLog.length > 90) {
+      Store.state.progress.weightLog = Store.state.progress.weightLog.slice(-90);
+    }
+    Store.save();
+    input.value = '';
+    this.render();
+    HomePage.refresh();
+    Toast.show(`Weight logged: ${val} kg`, 'success');
+  }
+};
+
+/* =========================================================
+   SETTINGS PAGE
+   ========================================================= */
+const SettingsPage = {
+  init() {
+    const s = Store.state;
+    document.getElementById('apiKeyInput').value = s.ai.apiKey || '';
+    document.getElementById('apiEndpointInput').value = s.ai.endpoint || '';
+    document.getElementById('userNameInput').value = s.profile.name || '';
+    document.getElementById('hydrationGoalInput').value = s.profile.hydrationGoal || 2500;
+
+    document.getElementById('apiKeyInput').addEventListener('change', (e) => {
+      Store.state.ai.apiKey = e.target.value.trim();
+      Store.save();
+      Toast.show('API key saved', 'success');
+    });
+    document.getElementById('apiEndpointInput').addEventListener('change', (e) => {
+      Store.state.ai.endpoint = e.target.value.trim();
+      Store.save();
+      Toast.show('Endpoint saved', 'success');
+    });
+    document.getElementById('userNameInput').addEventListener('change', (e) => {
+      Store.state.profile.name = e.target.value.trim() || 'Athlete';
+      Store.save();
+      HomePage.refresh();
+      Toast.show('Name updated', 'success');
+    });
+    document.getElementById('hydrationGoalInput').addEventListener('change', (e) => {
+      Store.state.profile.hydrationGoal = parseInt(e.target.value, 10) || 2500;
+      Store.save();
+      HomePage.refresh();
+      Toast.show('Goal updated', 'success');
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => Store.exportJSON());
+    document.getElementById('importBtn').addEventListener('click', () => {
+      document.getElementById('importFileInput').click();
+    });
+    document.getElementById('importFileInput').addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (file) Store.importJSON(file);
+      e.target.value = '';
+    });
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      Modal.show('Reset All Data',
+        '<p class="text-sm text-muted">This will permanently delete all your workouts, meals, progress, and settings. This cannot be undone.</p>',
+        `<button class="btn btn-ghost" onclick="Modal.hide()">Cancel</button>
+         <button class="btn btn-danger" id="confirmReset">Reset Everything</button>`);
+      document.getElementById('confirmReset').onclick = () => {
+        Store.reset();
+        Modal.hide();
+        Toast.show('All data has been reset', 'info');
+      };
+    });
+  }
+};
+
+/* =========================================================
+   APP CONTROLLER
+   ========================================================= */
+const App = {
+  init() {
+    Store.load();
+    Router.init();
+    HomePage.bindHydration();
+    HomePage.refresh();
+    NutritionPage.bindGoals();
+    NutritionPage.refresh();
+    document.getElementById('addMealBtn').addEventListener('click', () => NutritionPage.addMeal());
+    AICoach.init();
+    WorkoutPage.init();
+    SettingsPage.init();
+    document.getElementById('logWeightBtn').addEventListener('click', () => ProgressPage.logWeight());
+
+    // Topbar streak button
+    document.getElementById('streakBtn').addEventListener('click', () => {
+      Toast.show(`🔥 ${Store.state.progress.streak || 0}-day workout streak`, 'info');
+    });
+    document.getElementById('notifBtn').addEventListener('click', () => {
+      Toast.show('Notifications coming soon', 'info');
+    });
+
+    // Save on unload
+    window.addEventListener('beforeunload', () => Store.save(true));
+
+    console.log('%c⚡ NEXUS FIT AI loaded', 'color:#00d4ff;font-weight:bold;font-size:14px');
+  },
+
+  refreshAll() {
+    HomePage.refresh();
+    NutritionPage.refresh();
+    AICoach.renderModelSwitcher();
+    WorkoutPage.render();
+    SettingsPage.init();
+  }
+};
+
+/* =========================================================
+   BOOTSTRAP
+   ========================================================= */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => App.init());
+} else {
+  App.init();
+}
+</script>
 </body>
 </html>
