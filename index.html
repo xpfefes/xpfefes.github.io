@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#05070d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="NEXUS FIT AI" />
+  <meta name="description" content="AI-powered fitness operating system" />
+
+  <title>NEXUS FIT AI</title>
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <link rel="icon" type="image/png" href="assets/icons/icon-192.png" />
+
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+
+  <!-- Chart.js loaded async; app degrades gracefully if unavailable -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <script type="module" src="js/app.js" defer></script>
+</head>
+<body>
+  <!-- Animated backdrop -->
+  <div class="backdrop-grid" aria-hidden="true"></div>
+  <div class="backdrop-glow" aria-hidden="true"></div>
+
+  <!-- Top bar -->
+  <header class="topbar" role="banner">
+    <div class="topbar__brand">
+      <span class="brand__logo" aria-hidden="true">◆</span>
+      <div class="brand__text">
+        <span class="brand__name">NEXUS FIT</span>
+        <span class="brand__tag">AI OS · v1.0</span>
+      </div>
+    </div>
+    <div class="topbar__status">
+      <span class="level-badge" id="levelBadge">LVL 1</span>
+      <span class="xp-pill" id="xpPill">0 / 100 XP</span>
+    </div>
+  </header>
+
+  <!-- Main page container -->
+  <main id="appMain" class="app-main" role="main">
+    <!-- Pages injected by router -->
+  </main>
+
+  <!-- Bottom navigation -->
+  <nav class="bottomnav" role="navigation" aria-label="Primary">
+    <button class="bottomnav__item" data-route="home"     aria-label="Home">
+      <span class="bottomnav__icon">⌂</span><span class="bottomnav__label">Home</span>
+    </button>
+    <button class="bottomnav__item" data-route="nutrition" aria-label="Nutrition">
+      <span class="bottomnav__icon">◉</span><span class="bottomnav__label">Nutrition</span>
+    </button>
+    <button class="bottomnav__item bottomnav__item--accent" data-route="coach" aria-label="AI Coach">
+      <span class="bottomnav__icon">✦</span><span class="bottomnav__label">Coach</span>
+    </button>
+    <button class="bottomnav__item" data-route="progress" aria-label="Progress">
+      <span class="bottomnav__icon">▲</span><span class="bottomnav__label">Progress</span>
+    </button>
+    <button class="bottomnav__item" data-route="settings" aria-label="Settings">
+      <span class="bottomnav__icon">⚙</span><span class="bottomnav__label">Settings</span>
+    </button>
+  </nav>
+
+  <!-- Toast container -->
+  <div id="toastHost" class="toast-host" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
