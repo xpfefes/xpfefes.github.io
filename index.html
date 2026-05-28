@@ -1,810 +1,828 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="EriK AI Closed Beta Survey - Test limitato per utenti 13-16 anni" />
-  <meta name="robots" content="noindex, nofollow" />
-  <title>EriK AI Closed Beta Survey ✦˚</title>
-  <style>
-    :root{
-      --color-primary:#6366f1;
-      --color-primary-dark:#4f46e5;
-      --color-secondary:#8b5cf6;
-      --color-success:#10b981;
-      --color-danger:#ef4444;
-      --color-warning:#f59e0b;
-      --color-background:#0f172a;
-      --color-surface:#1e293b;
-      --color-surface-elevated:#334155;
-      --color-text-primary:#f1f5f9;
-      --color-text-secondary:#cbd5e1;
-      --color-text-muted:#94a3b8;
-      --color-border:#475569;
-      --font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-      --font-size-xs:0.75rem;
-      --font-size-sm:0.875rem;
-      --font-size-base:1rem;
-      --font-size-lg:1.125rem;
-      --font-size-xl:1.25rem;
-      --font-size-2xl:1.5rem;
-      --font-size-3xl:1.875rem;
-      --font-size-4xl:2.25rem;
-      --space-1:0.25rem;
-      --space-2:0.5rem;
-      --space-3:0.75rem;
-      --space-4:1rem;
-      --space-6:1.5rem;
-      --space-8:2rem;
-      --space-12:3rem;
-      --radius-sm:0.375rem;
-      --radius-md:0.5rem;
-      --radius-lg:0.75rem;
-      --radius-xl:1rem;
-      --shadow-sm:0 1px 2px 0 rgba(0,0,0,.05);
-      --shadow-md:0 4px 6px -1px rgba(0,0,0,.1);
-      --shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);
-      --shadow-glow:0 0 20px rgba(99,102,241,.3);
-      --transition-fast:150ms cubic-bezier(.4,0,.2,1);
-      --transition-base:250ms cubic-bezier(.4,0,.2,1);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="EriK AI Closed Beta Survey - Test limitato per utenti 13-16 anni">
+    <meta name="robots" content="noindex, nofollow">
+    <title>EriK AI Closed Beta Survey ✦˚</title>
+    
+    <!-- jsPDF per generazione PDF -->
+    <!-- PATCH #1: RIMOSSI integrity/crossorigin (hash originale corrotto) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" referrerpolicy="no-referrer"></script>
+    
+    <style>
+        /* ========================================
+           ERIK AI SURVEY v3.0.0 - DESIGN SYSTEM
+           WCAG 2.1 AA | PDF Export | Lock System
+           ======================================== */
 
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{font-size:16px;-webkit-font-smoothing:antialiased}
-    body{
-      font-family:var(--font-family);
-      font-size:var(--font-size-base);
-      line-height:1.6;
-      color:var(--color-text-primary);
-      background:linear-gradient(135deg,var(--color-background) 0%,#1a1f3a 100%);
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-    }
+        :root {
+            --color-primary: #6366f1;
+            --color-primary-dark: #4f46e5;
+            --color-secondary: #8b5cf6;
+            --color-success: #10b981;
+            --color-danger: #ef4444;
+            --color-warning: #f59e0b;
+            --color-background: #0f172a;
+            --color-surface: #1e293b;
+            --color-surface-elevated: #334155;
+            --color-text-primary: #f1f5f9;
+            --color-text-secondary: #cbd5e1;
+            --color-text-muted: #94a3b8;
+            --color-border: #475569;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    body.locked {
-      overflow: hidden;
-      pointer-events: none;
-    }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            color: var(--color-text-primary);
+            background: linear-gradient(135deg, var(--color-background) 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .no-js-warning{
-      position:fixed;inset:0;background:var(--color-danger);color:white;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      padding:var(--space-8);text-align:center;z-index:9999;
-    }
+        .no-js-warning { position: fixed; inset: 0; background: var(--color-danger); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--space-8); text-align: center; z-index: 9999; }
+        .survey-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: var(--space-4); max-width: 800px; width: 100%; margin: 0 auto; }
+        
+        .screen {
+            width: 100%;
+            background: var(--color-surface);
+            border-radius: var(--radius-xl);
+            padding: var(--space-12);
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn var(--transition-base) ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    .survey-container{
-      flex:1;display:flex;align-items:center;justify-content:center;
-      padding:var(--space-4);max-width:860px;width:100%;margin:0 auto;
-    }
+        .welcome-screen { text-align: center; }
+        .welcome-title { font-size: var(--font-size-4xl); font-weight: 700; background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: var(--space-6); }
+        .welcome-subtitle { font-size: var(--font-size-lg); color: var(--color-text-secondary); margin-bottom: var(--space-8); line-height: 1.8; }
+        .welcome-meta { font-size: var(--font-size-sm); color: var(--color-text-muted); margin-top: var(--space-4); }
 
-    .screen{
-      width:100%;
-      background:var(--color-surface);
-      border-radius:var(--radius-xl);
-      padding:var(--space-12);
-      box-shadow:var(--shadow-lg);
-      animation:fadeIn var(--transition-base) ease-out;
-    }
+        .question-screen { display: flex; flex-direction: column; gap: var(--space-8); }
+        .question-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--space-4); border-bottom: 2px solid var(--color-border); }
+        .question-number { font-size: var(--font-size-sm); color: var(--color-text-muted); font-weight: 600; }
+        .progress-indicator { font-size: var(--font-size-sm); color: var(--color-primary); font-weight: 600; }
+        .question-text { font-size: var(--font-size-2xl); font-weight: 600; color: var(--color-text-primary); line-height: 1.4; }
 
-    @keyframes fadeIn{
-      from{opacity:0;transform:translateY(10px)}
-      to{opacity:1;transform:translateY(0)}
-    }
+        .options-list { display: flex; flex-direction: column; gap: var(--space-3); list-style: none; }
+        .option-item { position: relative; }
+        .option-input { position: absolute; opacity: 0; pointer-events: none; }
+        .option-label { display: block; padding: var(--space-4) var(--space-6); background: var(--color-surface-elevated); border: 2px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition-fast); font-size: var(--font-size-base); color: var(--color-text-primary); user-select: none; }
+        .option-label:hover { border-color: var(--color-primary); transform: translateX(4px); }
+        .option-input:focus + .option-label { outline: 3px solid var(--color-primary); outline-offset: 2px; }
+        .option-input:checked + .option-label { background: var(--color-primary); border-color: var(--color-primary); color: white; font-weight: 600; }
 
-    .welcome-screen{text-align:center}
-    .welcome-title{
-      font-size:var(--font-size-4xl);
-      font-weight:700;
-      background:linear-gradient(135deg,var(--color-primary) 0%,var(--color-secondary) 100%);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      background-clip:text;
-      margin-bottom:var(--space-6);
-    }
-    .welcome-subtitle{
-      font-size:var(--font-size-lg);
-      color:var(--color-text-secondary);
-      margin-bottom:var(--space-8);
-      line-height:1.8;
-    }
-    .welcome-meta{font-size:var(--font-size-sm);color:var(--color-text-muted);margin-top:var(--space-4)}
+        .slider-container { display: flex; flex-direction: column; gap: var(--space-4); }
+        .slider-input { width: 100%; height: 8px; border-radius: var(--radius-sm); background: var(--color-surface-elevated); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
+        .slider-input::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); cursor: pointer; transition: all var(--transition-fast); box-shadow: var(--shadow-glow); }
+        .slider-input::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        .slider-input::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); cursor: pointer; border: none; box-shadow: var(--shadow-glow); }
+        .slider-value { text-align: center; font-size: var(--font-size-3xl); font-weight: 700; color: var(--color-primary); }
+        .slider-labels { display: flex; justify-content: space-between; font-size: var(--font-size-sm); color: var(--color-text-muted); }
 
-    .question-screen{display:flex;flex-direction:column;gap:var(--space-8)}
-    .question-header{
-      display:flex;justify-content:space-between;align-items:center;
-      padding-bottom:var(--space-4);border-bottom:2px solid var(--color-border)
-    }
-    .question-number{font-size:var(--font-size-sm);color:var(--color-text-muted);font-weight:600}
-    .progress-indicator{font-size:var(--font-size-sm);color:var(--color-primary);font-weight:600}
-    .question-text{font-size:var(--font-size-2xl);font-weight:600;color:var(--color-text-primary);line-height:1.4}
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4) var(--space-8); font-size: var(--font-size-lg); font-weight: 600; border: none; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition-fast); user-select: none; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); color: white; box-shadow: var(--shadow-md); }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow-lg), var(--shadow-glow); }
+        .btn-primary:active:not(:disabled) { transform: translateY(0); }
+        .btn-secondary { background: var(--color-surface-elevated); color: var(--color-text-primary); border: 2px solid var(--color-border); }
+        .btn-secondary:hover:not(:disabled) { background: var(--color-border); }
+        .btn-group { display: flex; gap: var(--space-4); justify-content: space-between; margin-top: var(--space-8); }
 
-    .options-list{display:flex;flex-direction:column;gap:var(--space-3);list-style:none}
-    .option-item{position:relative}
-    .option-input{position:absolute;opacity:0;pointer-events:none}
-    .option-label{
-      display:block;padding:var(--space-4) var(--space-6);background:var(--color-surface-elevated);
-      border:2px solid var(--color-border);border-radius:var(--radius-md);cursor:pointer;
-      transition:all var(--transition-fast);font-size:var(--font-size-base);color:var(--color-text-primary);user-select:none
-    }
-    .option-label:hover{border-color:var(--color-primary);transform:translateX(4px)}
-    .option-input:focus + .option-label{outline:3px solid var(--color-primary);outline-offset:2px}
-    .option-input:checked + .option-label{background:var(--color-primary);border-color:var(--color-primary);color:white;font-weight:600}
+        .error-screen { text-align: center; border: 3px solid var(--color-danger); }
+        .error-title { font-size: var(--font-size-3xl); color: var(--color-danger); margin-bottom: var(--space-6); }
+        .error-message { font-size: var(--font-size-lg); color: var(--color-text-secondary); margin-bottom: var(--space-8); line-height: 1.8; }
+        .blocked-screen { text-align: center; border: 3px solid var(--color-danger); }
+        .blocked-icon { font-size: 4rem; margin-bottom: var(--space-6); }
+        .quality-low { color: var(--color-warning); font-weight: 700; font-size: var(--font-size-xl); margin: var(--space-4) 0; }
 
-    .slider-container{display:flex;flex-direction:column;gap:var(--space-4)}
-    .slider-input{
-      width:100%;height:8px;border-radius:var(--radius-sm);background:var(--color-surface-elevated);
-      outline:none;-webkit-appearance:none;appearance:none;cursor:pointer
-    }
-    .slider-input::-webkit-slider-thumb{
-      -webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--color-primary);
-      cursor:pointer;transition:all var(--transition-fast);box-shadow:var(--shadow-glow)
-    }
-    .slider-input::-webkit-slider-thumb:hover{transform:scale(1.2)}
-    .slider-input::-moz-range-thumb{
-      width:24px;height:24px;border-radius:50%;background:var(--color-primary);
-      cursor:pointer;border:none;box-shadow:var(--shadow-glow)
-    }
-    .slider-value{text-align:center;font-size:var(--font-size-3xl);font-weight:700;color:var(--color-primary)}
-    .slider-labels{display:flex;justify-content:space-between;font-size:var(--font-size-sm);color:var(--color-text-muted)}
+        .summary-screen { display: flex; flex-direction: column; gap: var(--space-6); }
+        .summary-title { font-size: var(--font-size-3xl); font-weight: 700; background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; margin-bottom: var(--space-4); }
+        .summary-subtitle { text-align: center; color: var(--color-text-secondary); font-size: var(--font-size-lg); margin-bottom: var(--space-6); }
+        .summary-list { display: flex; flex-direction: column; gap: var(--space-4); max-height: 450px; overflow-y: auto; padding-right: var(--space-2); }
+        .summary-item { background: var(--color-surface-elevated); padding: var(--space-4); border-radius: var(--radius-md); border-left: 4px solid var(--color-primary); }
+        .summary-item-question { font-size: var(--font-size-sm); color: var(--color-text-muted); margin-bottom: var(--space-2); font-weight: 600; }
+        .summary-item-answer { font-size: var(--font-size-base); color: var(--color-text-primary); font-weight: 500; }
+        .summary-item.slider-answer { display: flex; align-items: center; gap: var(--space-3); }
+        .summary-item.slider-answer .slider-badge { background: var(--color-primary); color: white; padding: var(--space-1) var(--space-3); border-radius: var(--radius-sm); font-weight: 700; }
 
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
-      padding:var(--space-4) var(--space-8);font-size:var(--font-size-lg);font-weight:600;
-      border:none;border-radius:var(--radius-md);cursor:pointer;transition:all var(--transition-fast);user-select:none
-    }
-    .btn:disabled{opacity:.5;cursor:not-allowed}
-    .btn-primary{
-      background:linear-gradient(135deg,var(--color-primary) 0%,var(--color-secondary) 100%);
-      color:white;box-shadow:var(--shadow-md)
-    }
-    .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:var(--shadow-lg),var(--shadow-glow)}
-    .btn-secondary{background:var(--color-surface-elevated);color:var(--color-text-primary);border:2px solid var(--color-border)}
-    .btn-secondary:hover:not(:disabled){background:var(--color-border)}
-    .btn-danger{background:var(--color-danger);color:white}
-    .btn-group{display:flex;gap:var(--space-4);justify-content:space-between;margin-top:var(--space-8)}
+        .completion-screen { text-align: center; }
+        .completion-title { font-size: var(--font-size-4xl); font-weight: 700; background: linear-gradient(135deg, var(--color-success) 0%, var(--color-primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: var(--space-8); }
+        .completion-message { font-size: var(--font-size-lg); color: var(--color-text-secondary); margin-bottom: var(--space-8); line-height: 1.8; }
+        .completion-instructions { background: var(--color-surface-elevated); padding: var(--space-6); border-radius: var(--radius-lg); margin-bottom: var(--space-8); border-left: 4px solid var(--color-primary); }
+        .session-id { font-size: var(--font-size-sm); color: var(--color-text-muted); margin-top: var(--space-4); font-family: 'Courier New', monospace; }
+        
+        .download-section { margin: var(--space-6) 0; padding: var(--space-6); background: var(--color-surface-elevated); border-radius: var(--radius-lg); }
+        .download-section h3 { color: var(--color-text-primary); margin-bottom: var(--space-4); }
 
-    .error-screen,.blocked-screen{
-      text-align:center;
-      border:3px solid var(--color-danger);
-    }
-    .error-title{font-size:var(--font-size-3xl);color:var(--color-danger);margin-bottom:var(--space-6)}
-    .error-message{font-size:var(--font-size-lg);color:var(--color-text-secondary);margin-bottom:var(--space-8);line-height:1.8}
-    .blocked-icon{font-size:4rem;margin-bottom:var(--space-6)}
+        .survey-footer { text-align: center; padding: var(--space-4); color: var(--color-text-muted); font-size: var(--font-size-xs); }
+        .summary-list::-webkit-scrollbar { width: 8px; }
+        .summary-list::-webkit-scrollbar-track { background: var(--color-surface); border-radius: var(--radius-sm); }
+        .summary-list::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: var(--radius-sm); }
+        .summary-list::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
 
-    .summary-screen{display:flex;flex-direction:column;gap:var(--space-6)}
-    .summary-title{
-      font-size:var(--font-size-3xl);font-weight:700;
-      background:linear-gradient(135deg,var(--color-primary) 0%,var(--color-secondary) 100%);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-      text-align:center;margin-bottom:var(--space-4)
-    }
-    .summary-subtitle{text-align:center;color:var(--color-text-secondary);font-size:var(--font-size-lg);margin-bottom:var(--space-6)}
-    .summary-list{
-      display:flex;flex-direction:column;gap:var(--space-4);max-height:450px;
-      overflow-y:auto;padding-right:var(--space-2)
-    }
-    .summary-item{background:var(--color-surface-elevated);padding:var(--space-4);border-radius:var(--radius-md);border-left:4px solid var(--color-primary)}
-    .summary-item-question{font-size:var(--font-size-sm);color:var(--color-text-muted);margin-bottom:var(--space-2);font-weight:600}
-    .summary-item-answer{font-size:var(--font-size-base);color:var(--color-text-primary);font-weight:500}
-    .summary-item.slider-answer{display:flex;align-items:center;gap:var(--space-3)}
-    .summary-item.slider-answer .slider-badge{background:var(--color-primary);color:white;padding:var(--space-1) var(--space-3);border-radius:var(--radius-sm);font-weight:700}
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
 
-    .completion-screen{text-align:center}
-    .completion-title{
-      font-size:var(--font-size-4xl);font-weight:700;
-      background:linear-gradient(135deg,var(--color-success) 0%,var(--color-primary) 100%);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-      margin-bottom:var(--space-8)
-    }
-    .completion-message{font-size:var(--font-size-lg);color:var(--color-text-secondary);margin-bottom:var(--space-8);line-height:1.8}
-    .completion-instructions{
-      background:var(--color-surface-elevated);padding:var(--space-6);border-radius:var(--radius-lg);
-      margin-bottom:var(--space-8);border-left:4px solid var(--color-primary);text-align:left
-    }
-    .session-id{font-size:var(--font-size-sm);color:var(--color-text-muted);margin-top:var(--space-4);font-family:"Courier New",monospace}
-
-    .survey-footer{text-align:center;padding:var(--space-4);color:var(--color-text-muted);font-size:var(--font-size-xs)}
-    .summary-list::-webkit-scrollbar{width:8px}
-    .summary-list::-webkit-scrollbar-track{background:var(--color-surface);border-radius:var(--radius-sm)}
-    .summary-list::-webkit-scrollbar-thumb{background:var(--color-border);border-radius:var(--radius-sm)}
-    .summary-list::-webkit-scrollbar-thumb:hover{background:var(--color-primary)}
-
-    .sr-only{
-      position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0
-    }
-    *:focus-visible{outline:3px solid var(--color-primary);outline-offset:2px}
-
-    @media (max-width:640px){
-      .screen{padding:var(--space-6)}
-      .welcome-title,.completion-title,.summary-title{font-size:var(--font-size-3xl)}
-      .question-text{font-size:var(--font-size-xl)}
-      .btn-group{flex-direction:column-reverse}
-      .btn{width:100%}
-      .summary-list{max-height:300px}
-    }
-    @media (prefers-reduced-motion:reduce){
-      *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
-    }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+        @media (max-width: 640px) { .screen { padding: var(--space-6); } .welcome-title, .completion-title, .summary-title { font-size: var(--font-size-3xl); } .question-text { font-size: var(--font-size-xl); } .btn-group { flex-direction: column-reverse; } .btn { width: 100%; } .summary-list { max-height: 300px; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+        *:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }
+    </style>
 </head>
 <body>
-  <noscript>
-    <div class="no-js-warning" role="alert">
-      <h1>JavaScript Richiesto</h1>
-      <p>Questo sondaggio richiede JavaScript per funzionare correttamente.</p>
-    </div>
-  </noscript>
+    <noscript>
+        <div class="no-js-warning" role="alert">
+            <h1>JavaScript Richiesto</h1>
+            <p>Questo sondaggio richiede JavaScript per funzionare correttamente.</p>
+        </div>
+    </noscript>
+    
+    <main id="survey-container" class="survey-container" role="main" aria-live="polite"></main>
+    
+    <footer class="survey-footer" role="contentinfo">
+        <small>EriK MythOX™ - Sistema di raccolta dati beta v3.0.0</small>
+    </footer>
 
-  <main id="survey-container" class="survey-container" role="main" aria-live="polite"></main>
-  <footer class="survey-footer" role="contentinfo">
-    <small>EriK MythOX™ - Sistema di raccolta dati beta</small>
-  </footer>
-
-  <script>
-    'use strict';
-
-    const CONFIG = {
-      STORAGE_KEY: 'erik_survey_state_v3',
-      RESULTS_KEY: 'erik_survey_results_v3',
-      BLOCK_KEY: 'erik_survey_blocked_v3',
-      TARGET_AGE_GROUP: '13-16',
-      VERSION: '3.0.0',
-      BLOCK_CLOSE_DELAY: 1400
-    };
-
-    class SurveyState {
-      constructor() {
-        this.state = this.loadState() || this.getInitialState();
-        this.observers = new Set();
-      }
-      getInitialState() {
-        return {
-          currentScreen: 'welcome',
-          currentQuestion: 0,
-          answers: {},
-          sessionId: this.generateSessionId(),
-          startTime: Date.now(),
-          completed: false
-        };
-      }
-      generateSessionId() {
-        return `ERIK-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`.toUpperCase();
-      }
-      loadState() {
-        try {
-          const raw = localStorage.getItem(CONFIG.STORAGE_KEY);
-          if (!raw) return null;
-          const parsed = JSON.parse(raw);
-          return parsed && parsed.currentScreen ? parsed : null;
-        } catch {
-          return null;
-        }
-      }
-      saveState() {
-        try {
-          localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(this.state));
-        } catch {
-          try {
-            sessionStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(this.state));
-          } catch {}
-        }
-      }
-      subscribe(fn) {
-        this.observers.add(fn);
-        return () => this.observers.delete(fn);
-      }
-      notify() {
-        this.observers.forEach(fn => fn(this.state));
-      }
-      update(next) {
-        this.state = { ...this.state, ...next };
-        this.saveState();
-        this.notify();
-      }
-      getState() {
-        return { ...this.state, answers: { ...this.state.answers } };
-      }
-      reset() {
-        this.state = this.getInitialState();
-        this.saveState();
-        this.notify();
-      }
-    }
-
-    const QUESTIONS = [
-      {id:'age',type:'radio',text:'Quanti anni hai?',options:['10-12','13-16','17-20','21+'],required:true,isAgeCheck:true},
-      {id:'q1',type:'radio',text:'Quanto ti sembra intelligente EriK rispetto ad altre AI?',options:['Molto superiore','Superiore','Simile','Peggiore'],required:true},
-      {id:'q2',type:'radio',text:'Quale modello ti incuriosisce di più?',options:['MythOX 1 Mythos','MythOX 1 Plus','MythOX 1 Max','MythOX 1 Mini','EriK 5.5 Mini','EriK 5.5 Distilled'],required:true},
-      {id:'q3',type:'radio',text:'Quanto è importante avere 1 milione di token?',options:['Fondamentale','Utile','Poco utile','Non mi interessa'],required:true},
-      {id:'q4',type:'radio',text:'Useresti EriK per coding?',options:['Sempre','A volte','Solo test','No'],required:true},
-      {id:'q5',type:'slider',text:'Quanto ti piace il design dei nomi dei modelli?',min:1,max:10,default:5,required:true},
-      {id:'logic1',type:'radio',text:'Se 3 robot assemblano 3 widget in 3 minuti, quanti minuti servono a 100 robot per assemblare 100 widget?',options:['30 minuti','100 minuti','3 minuti','1 minuto'],correctAnswer:'3 minuti',isLogicCheck:true,required:true},
-      {id:'q6',type:'radio',text:'Quale modello sembra più premium?',options:['MythOX 1 Mythos','MythOX 1 Max','MythOX 1 Plus','5.5 Distilled'],required:true},
-      {id:'q7',type:'slider',text:'Quanto ti ispira fiducia EriK?',min:1,max:10,default:5,required:true},
-      {id:'q8',type:'radio',text:'Che vibe trasmette EriK?',options:['Futuristica','Hacker','Gaming','Corporate','Caotica','Tutte insieme 😭'],required:true},
-      {id:'q9',type:'radio',text:'Quale funzione vorresti?',options:['Memoria infinita','AI vocale','AI coding avanzata','UI futuristica','Multi agente','Tutto 💀'],required:true},
-      {id:'q10',type:'radio',text:'Quanto sarebbe figo usare EriK a scuola?',options:['Assurdo','Molto','Abbastanza','Meh'],required:true},
-      {id:'att1',type:'radio',text:'Quale di queste opzioni è corretta per procedere?',options:['Motore neurale','Luna Digitale','RTX 9090','Cane nucleare'],correctAnswer:'Luna Digitale',isAttentionCheck:true,required:true},
-      {id:'q11',type:'slider',text:'Quanto ti piace il nome MythOX?',min:1,max:10,default:5,required:true},
-      {id:'q12',type:'radio',text:'EriK sembra più…',options:['AI da gaming','AI professionale','AI meme','AI hacker','Dio digitale 💀'],required:true},
-      {id:'q13',type:'radio',text:'Che logo ti immagini?',options:['Occhio neon','Nucleo energetico','Maschera cyberpunk','Simbolo minimal tech'],required:true},
-      {id:'q14',type:'radio',text:'Quanto useresti EriK ogni giorno?',options:['Sempre','Tante volte','Poco','Mai'],required:true},
-      {id:'q15',type:'radio',text:'Preferisci AI serie o con personalità?',options:['Serie','Con personalità','Mix perfetto'],required:true},
-      {id:'logic2',type:'radio',text:'Completa la sequenza: 2, 6, 18, 54, ...',options:['108','162','72','148'],correctAnswer:'162',isLogicCheck:true,required:true},
-      {id:'q16',type:'radio',text:'Quale modello sembra più potente?',options:['MythOX Mythos','MythOX Max','MythOX Plus','5.5 Mini'],required:true},
-      {id:'q17',type:'slider',text:'Quanto è importante la velocità di risposta?',min:1,max:10,default:5,required:true},
-      {id:'q18',type:'radio',text:'Useresti EriK su telefono?',options:['Sì','No','Solo app','Solo browser'],required:true},
-      {id:'q19',type:'slider',text:'Quanto conta la grafica UI?',min:1,max:10,default:5,required:true},
-      {id:'q20',type:'radio',text:'Consiglieresti EriK ai tuoi amici?',options:['Sicuro','Probabilmente','Forse','No'],required:true},
-      {id:'q21',type:'radio',text:'Quale interfaccia preferisci?',options:['Tema scuro','Tema chiaro','Adattivo automatico','Personalizzabile'],required:true},
-      {id:'q22',type:'radio',text:'Quanto è importante il tempo di risposta <2s?',options:['Cruciale','Utile','Indifferente','Non conta'],required:true},
-      {id:'q23',type:'radio',text:'Che tono di voce preferisci?',options:['Formale','Amichevole','Tecnico','Diretto e conciso'],required:true},
-      {id:'q24',type:'radio',text:'Dove preferiresti usare EriK?',options:['Browser','App nativa','Desktop','Bot Discord'],required:true},
-      {id:'logic3',type:'radio',text:'Se oggi è martedì, che giorno sarà dopo domani?',options:['Mercoledì','Giovedì','Venerdì','Lunedì'],correctAnswer:'Giovedì',isLogicCheck:true,required:true},
-      {id:'q25',type:'slider',text:'Quanto è importante la privacy dei dati?',min:1,max:10,default:8,required:true},
-      {id:'q26',type:'radio',text:'Preferisci modelli open-source o closed-source?',options:['Open-source','Closed-source','Non mi importa','Dipende dall\'uso'],required:true},
-      {id:'q27',type:'radio',text:'Quanto conta la qualità della documentazione?',options:['Fondamentale','Molto','Medio','Poco'],required:true},
-      {id:'q28',type:'radio',text:'Modello di pricing preferito?',options:['Gratis','Freemium','Abbonamento','Pay per use'],required:true},
-      {id:'att2',type:'radio',text:'Seleziona l\'opzione per validare la risposta',options:['CPU atomica','Stella Quantica','Gatto nucleare','Router medievale'],correctAnswer:'Stella Quantica',isAttentionCheck:true,required:true},
-      {id:'q29',type:'slider',text:'Quanto è importante la community attiva?',min:1,max:10,default:5,required:true},
-      {id:'q30',type:'radio',text:'Quanto useresti plugin di terze parti?',options:['Sempre','Spesso','Raramente','Mai'],required:true},
-      {id:'q31',type:'radio',text:'Output preferito da AI?',options:['Testo','Codice','Immagini','Audio'],required:true},
-      {id:'q32',type:'radio',text:'Frequenza aggiornamenti ideale?',options:['Settimanale','Mensile','Trimestrale','Solo quando necessario'],required:true},
-      {id:'q33',type:'slider',text:'Quanto conta il branding visivo?',min:1,max:10,default:5,required:true},
-      {id:'q34',type:'radio',text:'Supporto lingue preferito?',options:['Solo italiano','Multi-lingua','Traduzione automatica','Inglese + italiano'],required:true},
-      {id:'logic4',type:'radio',text:'Quanti lati ha un cubo?',options:['4','6','8','12'],correctAnswer:'6',isLogicCheck:true,required:true},
-      {id:'q35',type:'slider',text:'Soddisfazione complessiva per EriK',min:1,max:10,default:5,required:true},
-      {id:'q36',type:'radio',text:'Probabilità di usare EriK tra 6 mesi?',options:['Altissima','Alta','Media','Bassa'],required:true},
-      {id:'q37',type:'radio',text:'Quale feature manca di più?',options:['Ricerca interna','Cronologia cloud','API pubbliche','Template pronti'],required:true},
-      {id:'att3',type:'radio',text:'Conferma la selezione corretta',options:['Nebula Core','Ologramma beta','Pixel sferico','Turbina quantica'],correctAnswer:'Nebula Core',isAttentionCheck:true,required:true},
-      {id:'q38',type:'slider',text:'Importanza della compatibilità mobile',min:1,max:10,default:5,required:true},
-      {id:'q39',type:'radio',text:'Preferenza formato output codice?',options:['Monospace','Syntax highlighting','Dark mode default','Light mode default'],required:true},
-      {id:'q40',type:'radio',text:'Come hai scoperto EriK?',options:['Social','Amici','Forum/Reddit','Ricerca web'],required:true}
-    ];
-
-    const REAL_QUESTIONS = QUESTIONS.filter(q => !q.isAgeCheck && !q.isAttentionCheck && !q.isLogicCheck);
-    const CHECKS = QUESTIONS.filter(q => q.isAgeCheck || q.isAttentionCheck || q.isLogicCheck);
-
-    class SurveyRenderer {
-      constructor(container, state) {
-        this.container = container;
-        this.state = state;
-        this.pdfReady = false;
-      }
-
-      render() {
-        const s = this.state.getState();
-        this.container.innerHTML = '';
-        const screen = this.getScreen(s);
-        if (screen) this.container.appendChild(screen);
-        const focusTarget = this.container.querySelector('button, input, [tabindex]:not([tabindex="-1"])');
-        if (focusTarget) setTimeout(() => focusTarget.focus(), 50);
-      }
-
-      getScreen(s) {
-        if (s.currentScreen === 'welcome') return this.renderWelcome();
-        if (s.currentScreen === 'question') return this.renderQuestion(s);
-        if (s.currentScreen === 'summary') return this.renderSummary(s);
-        if (s.currentScreen === 'completion') return this.renderCompletion(s);
-        if (s.currentScreen === 'blocked') return this.renderBlocked();
-        return this.renderWelcome();
-      }
-
-      renderWelcome() {
-        const el = this.createElement('section', 'screen welcome-screen');
-        el.setAttribute('aria-labelledby', 'welcome-title');
-        el.innerHTML = `
-          <h1 id="welcome-title" class="welcome-title">EriK AI Closed Beta Survey ✦˚</h1>
-          <p class="welcome-subtitle">Accesso limitato per utenti 13-16 anni.<br>Le risposte aiutano il training e il miglioramento del sistema EriK MythOX™.</p>
-          <button class="btn btn-primary" id="start-btn" type="button">INIZIA TEST</button>
-          <p class="welcome-meta">${REAL_QUESTIONS.length} domande • Tempo medio: 6-8 minuti</p>
-        `;
-        el.querySelector('#start-btn').addEventListener('click', () => this.state.update({ currentScreen: 'question', currentQuestion: 0 }));
-        return el;
-      }
-
-      renderQuestion(state) {
-        const q = QUESTIONS[state.currentQuestion];
-        if (!q) {
-          this.state.update({ currentScreen: 'summary' });
-          return null;
-        }
-
-        const el = this.createElement('section', 'screen question-screen');
-        const progress = Math.round(((state.currentQuestion + 1) / QUESTIONS.length) * 100);
-        el.innerHTML = `
-          <header class="question-header">
-            <span class="question-number">${this.getLabel(q, state.currentQuestion)}</span>
-            <span class="progress-indicator">${progress}%</span>
-          </header>
-          <h2 class="question-text">${this.esc(q.text)}</h2>
-          <form id="q-form" novalidate>
-            ${this.renderInput(q, state.answers[q.id])}
-            <div class="btn-group">
-              ${state.currentQuestion > 0 ? '<button type="button" class="btn btn-secondary" id="prev-btn">Indietro</button>' : '<div></div>'}
-              <button type="submit" class="btn btn-primary" id="next-btn">${state.currentQuestion === QUESTIONS.length - 1 ? 'Riepilogo' : 'Avanti'}</button>
-            </div>
-          </form>
-        `;
-        this.attachHandlers(el, q, state);
-        return el;
-      }
-
-      renderInput(q, val) {
-        if (q.type === 'radio') {
-          return `
-            <fieldset>
-              <legend class="sr-only">${this.esc(q.text)}</legend>
-              <ul class="options-list" role="radiogroup">
-                ${q.options.map((o, i) => `
-                  <li class="option-item">
-                    <input type="radio" name="${q.id}" id="${q.id}_${i}" value="${this.esc(o)}" class="option-input" ${val === o ? 'checked' : ''} required>
-                    <label for="${q.id}_${i}" class="option-label">${this.esc(o)}</label>
-                  </li>
-                `).join('')}
-              </ul>
-            </fieldset>
-          `;
-        }
-        const v = val || q.default;
-        return `
-          <div class="slider-container">
-            <input type="range" id="${q.id}" name="${q.id}" min="${q.min}" max="${q.max}" value="${v}" class="slider-input" aria-valuemin="${q.min}" aria-valuemax="${q.max}" aria-valuenow="${v}" required>
-            <div class="slider-value" id="${q.id}_val">${v}</div>
-            <div class="slider-labels"><span>${q.min}</span><span>${q.max}</span></div>
-          </div>
-        `;
-      }
-
-      attachHandlers(scr, q, st) {
-        const form = scr.querySelector('#q-form');
-        const prev = scr.querySelector('#prev-btn');
-
-        if (q.type === 'slider') {
-          const sl = scr.querySelector(`#${q.id}`);
-          const vl = scr.querySelector(`#${q.id}_val`);
-          sl.addEventListener('input', e => {
-            vl.textContent = e.target.value;
-            sl.setAttribute('aria-valuenow', e.target.value);
-          });
-        }
-
-        form.addEventListener('submit', e => {
-          e.preventDefault();
-
-          const formData = new FormData(form);
-          const ans = formData.get(q.id);
-
-          if (!ans && q.required) {
-            this.showError('Seleziona una risposta per continuare');
-            return;
-          }
-
-          if (q.isAgeCheck && ans !== CONFIG.TARGET_AGE_GROUP) {
-            this.blockAndRedirect('age_rejected', 'Qualità bassa: età non compatibile con il test.');
-            return;
-          }
-
-          if (q.isAttentionCheck && ans !== q.correctAnswer) {
-            this.blockAndRedirect('attention_failed', 'Qualità bassa: attenzione non sufficiente.');
-            return;
-          }
-
-          if (q.isLogicCheck && ans !== q.correctAnswer) {
-            this.blockAndRedirect('logic_failed', 'Qualità bassa: verifica logica non superata.');
-            return;
-          }
-
-          const newAnswers = { ...st.answers, [q.id]: ans };
-          const nextQ = st.currentQuestion + 1;
-          this.state.update(
-            nextQ >= QUESTIONS.length
-              ? { answers: newAnswers, currentScreen: 'summary' }
-              : { answers: newAnswers, currentQuestion: nextQ }
-          );
-        });
-
-        if (prev) {
-          prev.addEventListener('click', () => {
-            this.state.update({ currentQuestion: Math.max(0, st.currentQuestion - 1) });
-          });
-        }
-      }
-
-      renderSummary(st) {
-        const el = this.createElement('section', 'screen summary-screen');
-        el.setAttribute('aria-labelledby', 'summary-title');
-
-        const items = REAL_QUESTIONS.map(q => {
-          const a = st.answers[q.id];
-          if (a === undefined || a === null || a === '') return '';
-          if (q.type === 'slider') {
-            return `
-              <div class="summary-item" role="listitem">
-                <div class="summary-item-question">${this.esc(q.text)}</div>
-                <div class="summary-item-answer slider-answer"><span class="slider-badge">${this.esc(String(a))}</span><span>su ${q.max}</span></div>
-              </div>
-            `;
-          }
-          return `
-            <div class="summary-item" role="listitem">
-              <div class="summary-item-question">${this.esc(q.text)}</div>
-              <div class="summary-item-answer">${this.esc(String(a))}</div>
-            </div>
-          `;
-        }).join('');
-
-        el.innerHTML = `
-          <h1 id="summary-title" class="summary-title">Riepilogo Risposte ✦˚</h1>
-          <p class="summary-subtitle">Verifica le tue risposte prima di completare</p>
-          <div class="summary-list" role="list">${items}</div>
-          <div class="btn-group">
-            <button type="button" class="btn btn-secondary" id="edit-btn">Modifica</button>
-            <button type="button" class="btn btn-primary" id="confirm-btn">Conferma e Completa</button>
-          </div>
-        `;
-
-        el.querySelector('#edit-btn').addEventListener('click', () => this.state.update({ currentScreen: 'question', currentQuestion: 0 }));
-        el.querySelector('#confirm-btn').addEventListener('click', () => {
-          this.export(st);
-          this.state.update({ currentScreen: 'completion' });
-        });
-
-        return el;
-      }
-
-      renderBlocked() {
-        const el = this.createElement('section', 'screen blocked-screen');
-        el.setAttribute('role', 'alert');
-        el.innerHTML = `
-          <div class="blocked-icon">🚫</div>
-          <h1 class="error-title">Accesso Bloccato</h1>
-          <p class="error-message">
-            Il profilo non soddisfa i requisiti del test oppure una verifica è fallita.<br><br>
-            La sessione è stata chiusa e non può continuare.
-          </p>
-          <p style="color:var(--color-text-muted);font-size:var(--font-size-sm);margin-top:1.5rem;">Schermata qualità bassa attiva.</p>
-          <div class="btn-group" style="justify-content:center;margin-top:2rem;">
-            <button type="button" class="btn btn-danger" id="close-btn">Chiudi</button>
-          </div>
-        `;
-
-        el.querySelector('#close-btn').addEventListener('click', () => {
-          this.tryCloseTab();
-        });
-
-        return el;
-      }
-
-      renderCompletion(st) {
-        const el = this.createElement('section', 'screen completion-screen');
-        el.innerHTML = `
-          <h1 class="completion-title">TEST COMPLETATO ✦˚</h1>
-          <p class="completion-message">Le tue risposte sono state registrate correttamente nel sistema EriK MythOX™.</p>
-          <div class="completion-instructions">
-            <p>📄 Ora puoi scaricare il PDF con tutte le risposte e inviarlo dove ti serve.</p>
-          </div>
-          <div class="btn-group" style="justify-content:center;flex-wrap:wrap;">
-            <button class="btn btn-primary" id="pdf-btn" type="button">Scarica PDF risposte</button>
-            <button class="btn btn-secondary" id="finish-btn" type="button">Torna all'inizio</button>
-          </div>
-          <p class="session-id">Session ID: ${this.esc(st.sessionId)}</p>
-        `;
-
-        el.querySelector('#pdf-btn').addEventListener('click', () => this.exportPdf(st));
-        el.querySelector('#finish-btn').addEventListener('click', () => {
-          localStorage.removeItem(CONFIG.STORAGE_KEY);
-          this.state.reset();
-        });
-
-        return el;
-      }
-
-      blockAndRedirect(reason, message) {
-        try {
-          localStorage.setItem(CONFIG.BLOCK_KEY, JSON.stringify({
-            reason,
-            message,
-            timestamp: Date.now()
-          }));
-        } catch {}
-        this.state.update({ currentScreen: 'blocked' });
-        document.body.classList.add('locked');
-
-        setTimeout(() => {
-          this.tryCloseTab();
-        }, CONFIG.BLOCK_CLOSE_DELAY);
-      }
-
-      tryCloseTab() {
-        try {
-          window.open('', '_self');
-          window.close();
-        } catch {}
-        setTimeout(() => {
-          try {
-            location.replace('about:blank');
-          } catch {}
-        }, 250);
-      }
-
-      export(st) {
-        const data = {
-          sessionId: st.sessionId,
-          timestamp: new Date().toISOString(),
-          durationMs: Date.now() - st.startTime,
-          answers: st.answers,
-          version: CONFIG.VERSION
+    <script>
+        'use strict';
+        
+        const CONFIG = {
+            STORAGE_KEY: 'erik_survey_state_v3',
+            RESULTS_KEY: 'erik_survey_results_v3',
+            BLOCK_KEY: 'erik_survey_blocked_v3',
+            TARGET_AGE_GROUP: '13-16',
+            VERSION: '3.0.0',
+            DEBUG: false,
+            PDF_TITLE: 'EriK AI Survey - Report Risposte'
         };
 
-        try {
-          const arr = JSON.parse(localStorage.getItem(CONFIG.RESULTS_KEY) || '[]');
-          arr.push(data);
-          localStorage.setItem(CONFIG.RESULTS_KEY, JSON.stringify(arr));
-        } catch (e) {
-          console.error('Export failed', e);
+        class SurveyState {
+            constructor() {
+                this.state = this.loadState() || this.getInitialState();
+                this.observers = new Set();
+            }
+
+            getInitialState() {
+                return {
+                    currentScreen: 'welcome',
+                    currentQuestion: 0,
+                    answers: {},
+                    ageVerified: false,
+                    sessionId: this.generateSessionId(),
+                    startTime: Date.now(),
+                    completed: false,
+                    errorsCount: 0
+                };
+            }
+
+            generateSessionId() {
+                return `ERIK-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 8)}`.toUpperCase();
+            }
+
+            loadState() {
+                try {
+                    const s = localStorage.getItem(CONFIG.STORAGE_KEY);
+                    return s ? (JSON.parse(s).currentScreen && JSON.parse(s).answers ? JSON.parse(s) : null) : null;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            saveState() {
+                try {
+                    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(this.state));
+                } catch (e) {
+                    try {
+                        sessionStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(this.state));
+                    } catch (e2) {
+                        // Fallback failed
+                    }
+                }
+            }
+
+            subscribe(fn) {
+                this.observers.add(fn);
+                return () => this.observers.delete(fn);
+            }
+
+            notify() {
+                this.observers.forEach(fn => fn(this.state));
+            }
+
+            update(n) {
+                this.state = { ...this.state, ...n };
+                this.saveState();
+                this.notify();
+            }
+
+            getState() {
+                return { ...this.state };
+            }
+
+            reset() {
+                this.state = this.getInitialState();
+                this.saveState();
+                this.notify();
+            }
+
+            incrementErrors() {
+                this.update({ errorsCount: this.state.errorsCount + 1 });
+            }
         }
 
-        this.lastExport = data;
-      }
+        // 45 DOMANDE: 35 normali + 10 attenzione
+        const QUESTIONS = [
+            { id: 'age', type: 'radio', text: 'Quanti anni hai?', options: ['10-12', '13-16', '17-20', '21+'], required: true, isAgeCheck: true },
+            
+            { id: 'q1', type: 'radio', text: 'Quanto ti sembra intelligente EriK rispetto ad altre AI?', options: ['Molto superiore', 'Superiore', 'Simile', 'Peggiore'], required: true },
+            { id: 'q2', type: 'radio', text: 'Quale modello ti incuriosisce di più?', options: ['MythOX 1 Mythos', 'MythOX 1 Plus', 'MythOX 1 Max', 'MythOX 1 Mini', 'EriK 5.5 Mini', 'EriK 5.5 Distilled'], required: true },
+            { id: 'q3', type: 'radio', text: 'Quanto è importante avere 1 milione di token?', options: ['Fondamentale', 'Utile', 'Poco utile', 'Non mi interessa'], required: true },
+            { id: 'q4', type: 'radio', text: 'Useresti EriK per coding?', options: ['Sempre', 'A volte', 'Solo test', 'No'], required: true },
+            { id: 'q5', type: 'slider', text: 'Quanto ti piace il design dei nomi dei modelli?', min: 1, max: 10, default: 5, required: true },
+            
+            { id: 'q6', type: 'radio', text: 'Quale modello sembra più premium?', options: ['MythOX 1 Mythos', 'MythOX 1 Max', 'MythOX 1 Plus', '5.5 Distilled'], required: true },
+            { id: 'q7', type: 'slider', text: 'Quanto ti ispira fiducia EriK?', min: 1, max: 10, default: 5, required: true },
+            { id: 'q8', type: 'radio', text: 'Che vibe trasmette EriK?', options: ['Futuristica', 'Hacker', 'Gaming', 'Corporate', 'Caotica', 'Tutte insieme 😭'], required: true },
+            { id: 'q9', type: 'radio', text: 'Quale funzione vorresti?', options: ['Memoria infinita', 'AI vocale', 'AI coding avanzata', 'UI futuristica', 'Multi agente', 'Tutto 💀'], required: true },
+            { id: 'q10', type: 'radio', text: 'Quanto sarebbe figo usare EriK a scuola?', options: ['Assurdo', 'Molto', 'Abbastanza', 'Meh'], required: true },
+            
+            // ATTENZIONE 1
+            { id: 'att1', type: 'radio', text: 'Per continuare, seleziona "Sì"', options: ['Sì', 'No', 'Forse', 'Non so'], correctAnswer: 'Sì', isAttentionCheck: true, required: true },
+            
+            { id: 'q11', type: 'slider', text: 'Quanto ti piace il nome MythOX?', min: 1, max: 10, default: 5, required: true },
+            { id: 'q12', type: 'radio', text: 'EriK sembra più…', options: ['AI da gaming', 'AI professionale', 'AI meme', 'AI hacker', 'Dio digitale 💀'], required: true },
+            { id: 'q13', type: 'radio', text: 'Che logo ti immagini?', options: ['Occhio neon', 'Nucleo energetico', 'Maschera cyberpunk', 'Simbolo minimal tech'], required: true },
+            { id: 'q14', type: 'radio', text: 'Quanto useresti EriK ogni giorno?', options: ['Sempre', 'Tante volte', 'Poco', 'Mai'], required: true },
+            { id: 'q15', type: 'radio', text: 'Preferisci AI serie o con personalità?', options: ['Serie', 'Con personalità', 'Mix perfetto'], required: true },
+            
+            // ATTENZIONE 2
+            { id: 'att2', type: 'radio', text: 'Seleziona il numero "7" tra le opzioni', options: ['3', '7', '12', '9'], correctAnswer: '7', isAttentionCheck: true, required: true },
+            
+            { id: 'q16', type: 'radio', text: 'Quale modello sembra più potente?', options: ['MythOX Mythos', 'MythOX Max', 'MythOX Plus', '5.5 Mini'], required: true },
+            { id: 'q17', type: 'slider', text: 'Quanto è importante la velocità di risposta?', min: 1, max: 10, default: 5, required: true },
+            { id: 'q18', type: 'radio', text: 'Useresti EriK su telefono?', options: ['Sì', 'No', 'Solo app', 'Solo browser'], required: true },
+            { id: 'q19', type: 'slider', text: 'Quanto conta la grafica UI?', min: 1, max: 10, default: 5, required: true },
+            { id: 'q20', type: 'radio', text: 'Consiglieresti EriK ai tuoi amici?', options: ['Sicuro', 'Probabilmente', 'Forse', 'No'], required: true },
+            
+            // ATTENZIONE 3
+            { id: 'att3', type: 'radio', text: 'Clicca sull\'opzione che dice "Cielo blu"', options: ['Cielo verde', 'Cielo blu', 'Cielo rosso', 'Cielo giallo'], correctAnswer: 'Cielo blu', isAttentionCheck: true, required: true },
+            
+            { id: 'q21', type: 'radio', text: 'Quale interfaccia preferisci?', options: ['Tema scuro', 'Tema chiaro', 'Adattivo automatico', 'Personalizzabile'], required: true },
+            { id: 'q22', type: 'radio', text: 'Quanto è importante il tempo di risposta <2s?', options: ['Cruciale', 'Utile', 'Indifferente', 'Non conta'], required: true },
+            { id: 'q23', type: 'radio', text: 'Che tono di voce preferisci?', options: ['Formale', 'Amichevole', 'Tecnico', 'Diretto e conciso'], required: true },
+            { id: 'q24', type: 'radio', text: 'Dove preferiresti usare EriK?', options: ['Browser', 'App nativa', 'Desktop', 'Bot Discord'], required: true },
+            
+            // ATTENZIONE 4
+            { id: 'att4', type: 'radio', text: 'Per validare, seleziona "Vero"', options: ['Falso', 'Forse', 'Vero', 'Nessuno'], correctAnswer: 'Vero', isAttentionCheck: true, required: true },
+            
+            { id: 'q25', type: 'slider', text: 'Quanto è importante la privacy dei dati?', min: 1, max: 10, default: 8, required: true },
+            { id: 'q26', type: 'radio', text: 'Preferisci modelli open-source o closed-source?', options: ['Open-source', 'Closed-source', 'Non mi importa', 'Dipende dall\'uso'], required: true },
+            { id: 'q27', type: 'radio', text: 'Quanto conta la qualità della documentazione?', options: ['Fondamentale', 'Molto', 'Medio', 'Poco'], required: true },
+            { id: 'q28', type: 'radio', text: 'Modello di pricing preferito?', options: ['Gratis', 'Freemium', 'Abbonamento', 'Pay per use'], required: true },
+            
+            // ATTENZIONE 5
+            { id: 'att5', type: 'radio', text: 'Seleziona il colore "Rosso"', options: ['Blu', 'Verde', 'Rosso', 'Giallo'], correctAnswer: 'Rosso', isAttentionCheck: true, required: true },
+            
+            { id: 'q29', type: 'slider', text: 'Quanto è importante la community attiva?', min: 1, max: 10, default: 5, required: true },
+            { id: 'q30', type: 'radio', text: 'Quanto useresti plugin di terze parti?', options: ['Sempre', 'Spesso', 'Raramente', 'Mai'], required: true },
+            { id: 'q31', type: 'radio', text: 'Output preferito da AI?', options: ['Testo', 'Codice', 'Immagini', 'Audio'], required: true },
+            { id: 'q32', type: 'radio', text: 'Frequenza aggiornamenti ideale?', options: ['Settimanale', 'Mensile', 'Trimestrale', 'Solo quando necessario'], required: true },
+            
+            // ATTENZIONE 6
+            { id: 'att6', type: 'radio', text: 'Clicca sull\'opzione "OK" per procedere', options: ['Annulla', 'OK', 'Indietro', 'Salta'], correctAnswer: 'OK', isAttentionCheck: true, required: true },
+            
+            { id: 'q33', type: 'slider', text: 'Quanto conta il branding visivo?', min: 1, max: 10, default: 5, required: true },
+            { id: 'q34', type: 'radio', text: 'Supporto lingue preferito?', options: ['Solo italiano', 'Multi-lingua', 'Traduzione automatica', 'Inglese + italiano'], required: true },
+            
+            // ATTENZIONE 7
+            { id: 'att7', type: 'radio', text: 'Seleziona l\'opzione che parla di "Sole"', options: ['Luna', 'Stelle', 'Sole', 'Pianeti'], correctAnswer: 'Sole', isAttentionCheck: true, required: true },
+            
+            { id: 'q35', type: 'slider', text: 'Soddisfazione complessiva per EriK', min: 1, max: 10, default: 5, required: true },
+            { id: 'q36', type: 'radio', text: 'Probabilità di usare EriK tra 6 mesi?', options: ['Altissima', 'Alta', 'Media', 'Bassa'], required: true },
+            { id: 'q37', type: 'radio', text: 'Quale feature manca di più?', options: ['Ricerca interna', 'Cronologia cloud', 'API pubbliche', 'Template pronti'], required: true },
+            
+            // ATTENZIONE 8
+            { id: 'att8', type: 'radio', text: 'Per confermare, scegli "Avanti"', options: ['Indietro', 'Salta', 'Avanti', 'Annulla'], correctAnswer: 'Avanti', isAttentionCheck: true, required: true },
+            
+            { id: 'q38', type: 'slider', text: 'Importanza della compatibilità mobile', min: 1, max: 10, default: 5, required: true },
+            { id: 'q39', type: 'radio', text: 'Preferenza formato output codice?', options: ['Monospace', 'Syntax highlighting', 'Dark mode default', 'Light mode default'], required: true },
+            
+            // ATTENZIONE 9
+            { id: 'att9', type: 'radio', text: 'Seleziona l\'ultima opzione della lista', options: ['Prima', 'Seconda', 'Terza', 'Ultima'], correctAnswer: 'Ultima', isAttentionCheck: true, required: true },
+            
+            { id: 'q40', type: 'radio', text: 'Come hai scoperto EriK?', options: ['Social', 'Amici', 'Forum/Reddit', 'Ricerca web'], required: true },
+            
+            // ATTENZIONE 10
+            { id: 'att10', type: 'radio', text: 'Clicca su "Confermo di aver letto"', options: ['Non ho letto', 'Confermo di aver letto', 'Salta', 'Più tardi'], correctAnswer: 'Confermo di aver letto', isAttentionCheck: true, required: true }
+        ];
 
-      exportPdf(st) {
-        const payload = {
-          sessionId: st.sessionId,
-          timestamp: new Date().toISOString(),
-          durationMs: Date.now() - st.startTime,
-          answers: st.answers
-        };
-
-        const entries = [];
-        for (const q of REAL_QUESTIONS) {
-          const ans = payload.answers[q.id];
-          if (ans !== undefined && ans !== null && String(ans).trim() !== '') {
-            entries.push([q.text, String(ans)]);
-          }
+        // VERIFICA CONTEGGIO
+        if (QUESTIONS.length !== 45) {
+            console.error(`QUESTION COUNT MISMATCH: ${QUESTIONS.length}/45`);
         }
 
-        const jsPDF = window.jspdf && window.jspdf.jsPDF;
-        if (!jsPDF) {
-          this.showError('PDF non disponibile: la libreria non è caricata.');
-          return;
+        class PDFExporter {
+            constructor() {
+                /* PATCH #2: Lazy init - non crasha se jsPDF non ancora caricato */
+                this.jsPDF = null;
+            }
+
+            /* PATCH #3: Verifica disponibilità libreria PRIMA di usarla */
+            _ensureLib() {
+                if (!window.jspdf || typeof window.jspdf.jsPDF !== 'function') {
+                    throw new Error('Libreria PDF non disponibile. Verifica connessione e ricarica la pagina.');
+                }
+                if (!this.jsPDF) {
+                    this.jsPDF = window.jspdf.jsPDF;
+                }
+                return true;
+            }
+
+            async generatePDF(state, questions) {
+                this._ensureLib();
+                
+                const doc = new this.jsPDF();
+                const margin = 20;
+                let yPos = margin;
+
+                // Titolo
+                doc.setFontSize(20);
+                /* PATCH #4: Font valido invece di undefined */
+                doc.setFont('helvetica', 'bold');
+                doc.text(CONFIG.PDF_TITLE, margin, yPos);
+                yPos += 15;
+
+                // Info sessione
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Session ID: ${state.sessionId}`, margin, yPos);
+                yPos += 6;
+                doc.text(`Data: ${new Date().toLocaleString('it-IT')}`, margin, yPos);
+                yPos += 6;
+                doc.text(`Durata: ${Math.round((Date.now() - state.startTime) / 1000 / 60)} minuti`, margin, yPos);
+                yPos += 15;
+
+                // Linea separatore
+                doc.setLineWidth(0.5);
+                doc.line(margin, yPos, 190, yPos);
+                yPos += 10;
+
+                // Risposte
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Risposte al Sondaggio', margin, yPos);
+                yPos += 10;
+
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+
+                /* PATCH #5: Rimosso isLogicCheck (campo fantasma) */
+                const validQuestions = questions.filter(q => !q.isAgeCheck && !q.isAttentionCheck);
+                
+                validQuestions.forEach((q, idx) => {
+                    if (yPos > 270) {
+                        doc.addPage();
+                        yPos = margin;
+                    }
+
+                    const answer = state.answers[q.id];
+                    if (answer === undefined || answer === null || answer === '') return;
+
+                    // Domanda
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(`${idx + 1}. ${q.text}`, margin, yPos, { maxWidth: 170 });
+                    yPos += 6;
+
+                    // Risposta
+                    doc.setFont('helvetica', 'normal');
+                    let answerText = String(answer);
+                    if (q.type === 'slider') {
+                        answerText = `${answer} su ${q.max}`;
+                    }
+                    doc.text(`Risposta: ${answerText}`, margin + 5, yPos, { maxWidth: 165 });
+                    yPos += 10;
+                });
+
+                // Footer
+                yPos = 280;
+                doc.setFontSize(8);
+                doc.setTextColor(128, 128, 128);
+                doc.text('Generato automaticamente da EriK AI Survey System v3.0.0', margin, yPos);
+
+                return doc;
+            }
+
+            async download(state, questions) {
+                try {
+                    this._ensureLib();
+                    const doc = await this.generatePDF(state, questions);
+                    const filename = `EriK_Survey_${state.sessionId}_${new Date().toISOString().split('T')[0]}.pdf`;
+                    doc.save(filename);
+                    return { success: true, filename };
+                } catch (error) {
+                    console.error('PDF generation failed:', error);
+                    return { success: false, error: error.message || 'Errore sconosciuto' };
+                }
+            }
         }
 
-        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const margin = 40;
-        let y = 48;
+        class SurveyRenderer {
+            constructor(container, state) {
+                this.container = container;
+                this.state = state;
+                this.pdfExporter = new PDFExporter();
+            }
 
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(18);
-        doc.text('EriK AI Survey - Risposte', margin, y);
+            render() {
+                const s = this.state.getState();
+                this.container.innerHTML = '';
+                this.container.appendChild(this.getScreen(s));
+                const f = this.container.querySelector('button, input, [tabindex]:not([tabindex="-1"])');
+                if (f) setTimeout(() => f.focus(), 50);
+            }
 
-        y += 24;
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        doc.text(`Session ID: ${payload.sessionId}`, margin, y);
-        y += 14;
-        doc.text(`Data: ${payload.timestamp}`, margin, y);
-        y += 14;
-        doc.text(`Durata: ${Math.round(payload.durationMs / 1000)} secondi`, margin, y);
-        y += 22;
+            getScreen(s) {
+                if (s.currentScreen === 'welcome') return this.renderWelcome();
+                if (s.currentScreen === 'question') return this.renderQuestion(s);
+                if (s.currentScreen === 'summary') return this.renderSummary(s);
+                if (s.currentScreen === 'completion') return this.renderCompletion(s);
+                if (s.currentScreen === 'blocked') return this.renderBlocked();
+                return this.renderWelcome();
+            }
 
-        doc.setFontSize(11);
-        for (const [question, answer] of entries) {
-          const qLines = doc.splitTextToSize(`Q: ${question}`, pageWidth - margin * 2);
-          const aLines = doc.splitTextToSize(`A: ${answer}`, pageWidth - margin * 2);
-          const blockHeight = (qLines.length + aLines.length) * 14 + 12;
+            renderWelcome() {
+                const s = this.createElement('section', 'screen welcome-screen');
+                s.setAttribute('aria-labelledby', 'welcome-title');
+                s.innerHTML = `
+                    <h1 id="welcome-title" class="welcome-title">EriK AI Closed Beta Survey ✦˚</h1>
+                    <p class="welcome-subtitle">Accesso limitato per utenti 13-16 anni.<br>Le risposte aiutano il training e il miglioramento del sistema EriK MythOX™.</p>
+                    <button class="btn btn-primary" id="start-btn" type="button">INIZIA TEST</button>
+                    <p class="welcome-meta">45 domande • Tempo medio: 6-8 minuti</p>`;
+                s.querySelector('#start-btn').addEventListener('click', () => this.state.update({ currentScreen: 'question', currentQuestion: 0 }));
+                return s;
+            }
 
-          if (y + blockHeight > 800) {
-            doc.addPage();
-            y = 48;
-          }
+            renderQuestion(state) {
+                const q = QUESTIONS[state.currentQuestion];
+                if (!q) {
+                    this.state.update({ currentScreen: 'summary' });
+                    return null;
+                }
 
-          doc.setFont('helvetica', 'bold');
-          doc.text(qLines, margin, y);
-          y += qLines.length * 14 + 4;
+                const s = this.createElement('section', 'screen question-screen');
+                const progress = Math.round(((state.currentQuestion + 1) / QUESTIONS.length) * 100);
+                s.innerHTML = `
+                    <header class="question-header">
+                        <span class="question-number">${this.getLabel(q, state.currentQuestion)}</span>
+                        <span class="progress-indicator">${progress}%</span>
+                    </header>
+                    <h2 class="question-text">${this.esc(q.text)}</h2>
+                    <form id="q-form" novalidate>
+                        ${this.renderInput(q, state.answers[q.id])}
+                        <div class="btn-group">
+                            ${state.currentQuestion > 0 ? '<button type="button" class="btn btn-secondary" id="prev-btn">Indietro</button>' : '<div></div>'}
+                            <button type="submit" class="btn btn-primary" id="next-btn">${state.currentQuestion === QUESTIONS.length - 1 ? 'Riepilogo' : 'Avanti'}</button>
+                        </div>
+                    </form>`;
+                this.attachHandlers(s, q, state);
+                return s;
+            }
 
-          doc.setFont('helvetica', 'normal');
-          doc.text(aLines, margin, y);
-          y += aLines.length * 14 + 12;
+            renderInput(q, val) {
+                if (q.type === 'radio') {
+                    return `<fieldset>
+                        <legend class="sr-only">${this.esc(q.text)}</legend>
+                        <ul class="options-list" role="radiogroup">
+                            ${q.options.map((o, i) => `
+                                <li class="option-item">
+                                    <input type="radio" name="${q.id}" id="${q.id}_${i}" value="${this.esc(o)}" class="option-input" ${val === o ? 'checked' : ''} required>
+                                    <label for="${q.id}_${i}" class="option-label">${this.esc(o)}</label>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </fieldset>`;
+                }
 
-          doc.setDrawColor(200);
-          doc.line(margin, y - 8, pageWidth - margin, y - 8);
+                const v = val || q.default;
+                return `<div class="slider-container">
+                    <input type="range" id="${q.id}" name="${q.id}" min="${q.min}" max="${q.max}" value="${v}" class="slider-input" aria-valuemin="${q.min}" aria-valuemax="${q.max}" aria-valuenow="${v}" required>
+                    <div class="slider-value" id="${q.id}_val">${v}</div>
+                    <div class="slider-labels">
+                        <span>${q.min}</span>
+                        <span>${q.max}</span>
+                    </div>
+                </div>`;
+            }
+
+            attachHandlers(scr, q, st) {
+                const form = scr.querySelector('#q-form');
+                const next = scr.querySelector('#next-btn');
+                const prev = scr.querySelector('#prev-btn');
+
+                if (q.type === 'slider') {
+                    const sl = scr.querySelector(`#${q.id}`);
+                    const vl = scr.querySelector(`#${q.id}_val`);
+                    sl.addEventListener('input', e => {
+                        vl.textContent = e.target.value;
+                        sl.setAttribute('aria-valuenow', e.target.value);
+                    });
+                }
+
+                form.addEventListener('submit', e => {
+                    e.preventDefault();
+                    const ans = new FormData(form).get(q.id);
+
+                    if (!ans && q.required) {
+                        this.showError('Seleziona una risposta per continuare');
+                        return;
+                    }
+
+                    if (q.isAgeCheck && ans !== CONFIG.TARGET_AGE_GROUP) {
+                        this.blockAndRedirect('age_rejected');
+                        return;
+                    }
+
+                    if (q.isAttentionCheck && ans !== q.correctAnswer) {
+                        this.state.incrementErrors();
+                        this.blockAndRedirect('attention_failed');
+                        return;
+                    }
+
+                    const newAns = { ...st.answers, [q.id]: ans };
+                    const nextQ = st.currentQuestion + 1;
+
+                    if (nextQ >= QUESTIONS.length) {
+                        this.state.update({ answers: newAns, currentScreen: 'summary' });
+                    } else {
+                        this.state.update({ answers: newAns, currentQuestion: nextQ });
+                    }
+                });
+
+                if (prev) {
+                    prev.addEventListener('click', () => this.state.update({ currentQuestion: st.currentQuestion - 1 }));
+                }
+            }
+
+            renderSummary(st) {
+                const s = this.createElement('section', 'screen summary-screen');
+                s.setAttribute('aria-labelledby', 'summary-title');
+
+                /* PATCH #5b: Rimosso isLogicCheck reference fantasma */
+                const html = QUESTIONS.filter(q => !q.isAgeCheck && !q.isAttentionCheck)
+                    .map(q => {
+                        const a = st.answers[q.id];
+                        if (a === undefined || a === null || a === '') return '';
+
+                        if (q.type === 'slider') {
+                            return `<div class="summary-item" role="listitem">
+                                <div class="summary-item-question">${this.esc(q.text)}</div>
+                                <div class="summary-item-answer slider-answer">
+                                    <span class="slider-badge">${a}</span>
+                                    <span>su ${q.max}</span>
+                                </div>
+                            </div>`;
+                        }
+
+                        return `<div class="summary-item" role="listitem">
+                            <div class="summary-item-question">${this.esc(q.text)}</div>
+                            <div class="summary-item-answer">${this.esc(String(a))}</div>
+                        </div>`;
+                    }).join('');
+
+                s.innerHTML = `
+                    <h1 id="summary-title" class="summary-title">Riepilogo Risposte ✦˚</h1>
+                    <p class="summary-subtitle">Verifica le tue risposte prima di completare</p>
+                    <div class="summary-list" role="list">${html}</div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" id="edit-btn">Modifica</button>
+                        <button type="button" class="btn btn-primary" id="confirm-btn">Conferma e Scarica PDF</button>
+                    </div>`;
+
+                s.querySelector('#edit-btn').addEventListener('click', () => this.state.update({ currentScreen: 'question', currentQuestion: 0 }));
+                s.querySelector('#confirm-btn').addEventListener('click', async () => {
+                    const result = await this.pdfExporter.download(st, QUESTIONS);
+                    if (result.success) {
+                        this.state.update({ currentScreen: 'completion', pdfDownloaded: true });
+                    } else {
+                        this.showError('Errore generazione PDF: ' + result.error);
+                    }
+                });
+
+                return s;
+            }
+
+            renderBlocked() {
+                const s = this.createElement('section', 'screen blocked-screen');
+                s.setAttribute('role', 'alert');
+                s.innerHTML = `
+                    <div class="blocked-icon">🚫</div>
+                    <h1 class="error-title">Accesso Bloccato</h1>
+                    <p class="quality-low">⚠️ QUALITÀ CANDIDATO: BASSA ⚠️</p>
+                    <p class="error-message">
+                        Il tuo profilo non soddisfa i requisiti del test o la verifica di attenzione è fallita.<br><br>
+                        Non è possibile ripetere il sondaggio.<br>
+                        Contatta il team EriK MythOX™ per informazioni.
+                    </p>
+                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: 2rem;">
+                        Sessione terminata permanentemente.
+                    </p>`;
+                return s;
+            }
+
+            renderCompletion(st) {
+                const s = this.createElement('section', 'screen completion-screen');
+                s.innerHTML = `
+                    <h1 class="completion-title">TEST COMPLETATO ✦˚</h1>
+                    <p class="completion-message">Le tue risposte sono state registrate correttamente nel sistema EriK MythOX™.</p>
+                    
+                    <div class="download-section">
+                        <h3>📄 PDF Scaricato</h3>
+                        <p style="color: var(--color-text-secondary); margin: var(--space-4) 0;">
+                            Il tuo report è stato generato e scaricato con successo.
+                        </p>
+                        <button class="btn btn-primary" id="download-again-btn" type="button">SCARICA NUOVAMENTE PDF</button>
+                    </div>
+                    
+                    <div class="completion-instructions">
+                        <p>📸 Ora invia il PDF scaricato nel gruppo di colocazione per ricevere la ricompensa beta.</p>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="finish-btn" type="button">TERMINA</button>
+                    <p class="session-id">Session ID: ${st.sessionId}</p>`;
+
+                s.querySelector('#download-again-btn').addEventListener('click', async () => {
+                    const result = await this.pdfExporter.download(st, QUESTIONS);
+                    if (!result.success) {
+                        this.showError('Errore download PDF: ' + result.error);
+                    }
+                });
+
+                s.querySelector('#finish-btn').addEventListener('click', () => {
+                    try {
+                        localStorage.removeItem(CONFIG.STORAGE_KEY);
+                    } catch (e) { /* ignore */ }
+                    this.state.update({ currentScreen: 'welcome' });
+                });
+
+                return s;
+            }
+
+            blockAndRedirect(reason) {
+                try {
+                    localStorage.setItem(CONFIG.BLOCK_KEY, JSON.stringify({ reason, timestamp: Date.now() }));
+                } catch (e) { /* localStorage disabilitato */ }
+                this.state.update({ currentScreen: 'blocked' });
+            }
+
+            export(st) {
+                const data = {
+                    sessionId: st.sessionId,
+                    timestamp: new Date().toISOString(),
+                    duration: Date.now() - st.startTime,
+                    answers: st.answers,
+                    version: CONFIG.VERSION,
+                    errorsCount: st.errorsCount
+                };
+
+                if (CONFIG.DEBUG) {
+                    console.log('Survey Data:', data);
+                }
+
+                try {
+                    const arr = JSON.parse(localStorage.getItem(CONFIG.RESULTS_KEY) || '[]');
+                    arr.push(data);
+                    localStorage.setItem(CONFIG.RESULTS_KEY, JSON.stringify(arr));
+                } catch (e) {
+                    console.error('Export failed', e);
+                }
+            }
+
+            getLabel(q, i) {
+                if (q.isAgeCheck) return 'Verifica Età';
+                /* PATCH #5c: Rimosso isLogicCheck */
+                const valid = QUESTIONS.filter(x => !x.isAgeCheck && !x.isAttentionCheck);
+                const idx = valid.findIndex(x => x.id === q.id);
+                return idx >= 0 ? `Domanda ${idx + 1} di ${valid.length}` : `${i + 1}`;
+            }
+
+            createElement(t, c) {
+                const e = document.createElement(t);
+                if (c) e.className = c;
+                return e;
+            }
+
+            esc(t) {
+                const d = document.createElement('div');
+                d.textContent = t;
+                return d.innerHTML;
+            }
+
+            showError(m) {
+                const e = document.createElement('div');
+                e.setAttribute('role', 'alert');
+                e.style.cssText = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--color-danger); color: white; padding: 1rem 2rem; border-radius: 0.5rem; z-index: 10000; animation: fadeIn 0.3s ease-out;`;
+                e.textContent = m;
+                document.body.appendChild(e);
+                setTimeout(() => {
+                    e.style.animation = 'fadeIn 0.3s ease-out reverse';
+                    setTimeout(() => e.remove(), 300);
+                }, 3000);
+            }
         }
 
-        const safeFile = `erik_risposte_${payload.sessionId}.pdf`;
-        doc.save(safeFile);
-      }
+        class SurveyApp {
+            constructor() {
+                this.container = document.getElementById('survey-container');
+                if (!this.container) throw new Error('Container missing');
 
-      getLabel(q, index) {
-        if (q.isAgeCheck) return 'Verifica Età';
-        const validIndex = REAL_QUESTIONS.findIndex(x => x.id === q.id);
-        return validIndex >= 0 ? `Domanda ${validIndex + 1} di ${REAL_QUESTIONS.length}` : `${index + 1}`;
-      }
+                this.state = new SurveyState();
+                this.renderer = new SurveyRenderer(this.container, this.state);
+                this.init();
+            }
 
-      createElement(tag, className) {
-        const el = document.createElement(tag);
-        if (className) el.className = className;
-        return el;
-      }
+            init() {
+                // CHECK PERMANENT BLOCK
+                try {
+                    const blockedStr = localStorage.getItem(CONFIG.BLOCK_KEY);
+                    if (blockedStr) {
+                        const blocked = JSON.parse(blockedStr);
+                        if (blocked && blocked.timestamp) {
+                            this.state.update({ currentScreen: 'blocked' });
+                            this.renderer.render();
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    // Block check failed - continua normalmente
+                }
 
-      esc(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      }
+                this.state.subscribe(() => this.renderer.render());
+                this.renderer.render();
 
-      showError(message) {
-        const el = document.createElement('div');
-        el.setAttribute('role', 'alert');
-        el.style.cssText = `
-          position:fixed;top:20px;left:50%;transform:translateX(-50%);
-          background:var(--color-danger);color:white;padding:1rem 2rem;
-          border-radius:0.5rem;z-index:10000;animation:fadeIn 0.3s ease-out;
-          box-shadow:0 10px 25px rgba(0,0,0,.25);max-width:min(92vw, 560px);text-align:center;
-        `;
-        el.textContent = message;
-        document.body.appendChild(el);
-        setTimeout(() => {
-          el.style.animation = 'fadeIn 0.3s ease-out reverse';
-          setTimeout(() => el.remove(), 300);
-        }, 2500);
-      }
-    }
+                // Prevenzione chiusura accidentale
+                window.addEventListener('beforeunload', (e) => {
+                    const state = this.state.getState();
+                    if (state.currentScreen === 'question' && !state.completed) {
+                        e.preventDefault();
+                        e.returnValue = 'Sei sicuro di voler abbandonare il sondaggio? I progressi andranno persi.';
+                        return e.returnValue;
+                    }
+                });
 
-    class SurveyApp {
-      constructor() {
-        this.container = document.getElementById('survey-container');
-        if (!this.container) throw new Error('Container missing');
-        this.state = new SurveyState();
-        this.renderer = new SurveyRenderer(this.container, this.state);
-        this.init();
-      }
+                // Prevenzione navigazione indietro
+                window.addEventListener('popstate', () => history.pushState(null, '', location.href));
+                history.pushState(null, '', location.href);
+            }
+        }
 
-      init() {
-        try {
-          const blocked = JSON.parse(localStorage.getItem(CONFIG.BLOCK_KEY));
-          if (blocked && blocked.timestamp) {
-            this.state.update({ currentScreen: 'blocked' });
-            document.body.classList.add('locked');
-            this.renderer.render();
-            return;
-          }
-        } catch {}
-
-        this.state.subscribe(() => this.renderer.render());
-        this.renderer.render();
-
-        window.addEventListener('popstate', () => {
-          history.pushState(null, '', location.href);
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                window.surveyApp = new SurveyApp();
+            } catch (e) {
+                document.getElementById('survey-container').innerHTML = `
+                    <section class="screen error-screen" role="alert">
+                        <h1 class="error-title">Errore</h1>
+                        <p class="error-message">Errore caricamento. Ricarica.</p>
+                        <button class="btn btn-primary" onclick="location.reload()">Ricarica</button>
+                    </section>`;
+            }
         });
-        history.pushState(null, '', location.href);
-      }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      try {
-        window.surveyApp = new SurveyApp();
-      } catch (e) {
-        document.getElementById('survey-container').innerHTML = `
-          <section class="screen error-screen" role="alert">
-            <h1 class="error-title">Errore</h1>
-            <p class="error-message">Errore caricamento. Ricarica la pagina.</p>
-            <button class="btn btn-primary" onclick="location.reload()">Ricarica</button>
-          </section>
-        `;
-      }
-    });
-
-    document.addEventListener('submit', e => {
-      if (!e.target.id || e.target.id !== 'q-form') e.preventDefault();
-    });
-  </script>
+        document.addEventListener('submit', e => {
+            if (!e.target.id || e.target.id !== 'q-form') e.preventDefault();
+        });
+    </script>
 </body>
 </html>
-
-
-
