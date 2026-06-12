@@ -1,828 +1,1330 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="EriK AI Closed Beta Survey - Test limitato per utenti 13-16 anni">
-    <meta name="robots" content="noindex, nofollow">
-    <title>EriK AI Closed Beta Survey ✦˚</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyGPT - Personal Assistant</title>
+  
+  <!-- Marked.js for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- DOMPurify for XSS prevention -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+  <!-- Highlight.js for code syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #212121;
+      --bg-secondary: #171717;
+      --bg-tertiary: #2f2f2f;
+      --text-primary: #ececec;
+      --text-secondary: #b4b4b4;
+      --border-color: #424242;
+      --accent-color: #10a37f;
+      --danger-color: #ef4444;
+    }
+
+    html.light {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f9f9f9;
+      --bg-tertiary: #f4f4f4;
+      --text-primary: #0d0d0d;
+      --text-secondary: #4d4d4d;
+      --border-color: #e5e5e5;
+      --accent-color: #10a37f;
+      --danger-color: #ef4444;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      overflow: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    #app {
+      display: flex;
+      height: 100%;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border-color);
+      transition: transform 0.3s ease;
+      z-index: 50;
+    }
+
+    .sidebar-header {
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .new-chat-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    .new-chat-btn:hover { background: var(--bg-tertiary); }
+
+    .chat-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .chat-item {
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .chat-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+    .chat-item.active { background: var(--bg-tertiary); color: var(--text-primary); }
     
-    <!-- jsPDF per generazione PDF -->
-    <!-- PATCH #1: RIMOSSI integrity/crossorigin (hash originale corrotto) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" referrerpolicy="no-referrer"></script>
+    .chat-item .delete-chat {
+      opacity: 0;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 4px;
+    }
+    .chat-item:hover .delete-chat { opacity: 1; }
+
+    .sidebar-footer {
+      padding: 12px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .settings-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .settings-btn:hover { background: var(--bg-tertiary); }
+
+    /* Main Area */
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #header {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background-color: var(--bg-primary);
+      z-index: 10;
+    }
+
+    .model-selector {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+    }
+
+    #chat-container {
+      flex: 1;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    #messages {
+      max-width: 768px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .message.user .avatar { background: #5436DA; color: white; }
+    .message.assistant .avatar { background: #10a37f; color: white; }
+
+    .message-body {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .message-header {
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .content {
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+
+    .msg-attachments {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .msg-attachments img {
+      max-width: 200px;
+      max-height: 200px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid var(--border-color);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .message:hover .actions { opacity: 1; }
+
+    .actions button {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+    }
+    .actions button:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .error-msg {
+      color: var(--danger-color);
+      background: rgba(239, 68, 68, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--danger-color);
+    }
+
+    /* Markdown Styling */
+    .markdown-content p { margin: 0 0 16px 0; }
+    .markdown-content p:last-child { margin-bottom: 0; }
+    .markdown-content ul, .markdown-content ol { padding-left: 24px; margin-bottom: 16px; }
+    .markdown-content pre {
+      background: #0d0d0d;
+      color: #fff;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 16px 0;
+      position: relative;
+    }
+    html.light .markdown-content pre { background: #f4f4f4; color: #0d0d0d; }
     
-    <style>
-        /* ========================================
-           ERIK AI SURVEY v3.0.0 - DESIGN SYSTEM
-           WCAG 2.1 AA | PDF Export | Lock System
-           ======================================== */
+    .markdown-content code {
+      font-family: "Consolas", "Monaco", "Courier New", monospace;
+      font-size: 14px;
+    }
+    .markdown-content p code {
+      background: var(--bg-tertiary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    .markdown-content table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 16px 0;
+    }
+    .markdown-content th, .markdown-content td {
+      border: 1px solid var(--border-color);
+      padding: 8px;
+      text-align: left;
+    }
+    .markdown-content blockquote {
+      border-left: 4px solid var(--border-color);
+      margin: 0 0 16px 0;
+      padding: 8px 16px;
+      color: var(--text-secondary);
+      background: var(--bg-tertiary);
+      border-radius: 0 8px 8px 0;
+    }
 
-        :root {
-            --color-primary: #6366f1;
-            --color-primary-dark: #4f46e5;
-            --color-secondary: #8b5cf6;
-            --color-success: #10b981;
-            --color-danger: #ef4444;
-            --color-warning: #f59e0b;
-            --color-background: #0f172a;
-            --color-surface: #1e293b;
-            --color-surface-elevated: #334155;
-            --color-text-primary: #f1f5f9;
-            --color-text-secondary: #cbd5e1;
-            --color-text-muted: #94a3b8;
-            --color-border: #475569;
-            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            --font-size-xs: 0.75rem;
-            --font-size-sm: 0.875rem;
-            --font-size-base: 1rem;
-            --font-size-lg: 1.125rem;
-            --font-size-xl: 1.25rem;
-            --font-size-2xl: 1.5rem;
-            --font-size-3xl: 1.875rem;
-            --font-size-4xl: 2.25rem;
-            --space-1: 0.25rem;
-            --space-2: 0.5rem;
-            --space-3: 0.75rem;
-            --space-4: 1rem;
-            --space-6: 1.5rem;
-            --space-8: 2rem;
-            --space-12: 3rem;
-            --space-16: 4rem;
-            --radius-sm: 0.375rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
-            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      opacity: 0.8;
+    }
+    .copy-btn:hover { opacity: 1; color: var(--text-primary); }
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { font-size: 16px; -webkit-font-smoothing: antialiased; }
-        body {
-            font-family: var(--font-family);
-            font-size: var(--font-size-base);
-            line-height: 1.6;
-            color: var(--color-text-primary);
-            background: linear-gradient(135deg, var(--color-background) 0%, #1a1f3a 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 8px 0;
+    }
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      background: var(--text-secondary);
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
 
-        .no-js-warning { position: fixed; inset: 0; background: var(--color-danger); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--space-8); text-align: center; z-index: 9999; }
-        .survey-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: var(--space-4); max-width: 800px; width: 100%; margin: 0 auto; }
-        
-        .screen {
-            width: 100%;
-            background: var(--color-surface);
-            border-radius: var(--radius-xl);
-            padding: var(--space-12);
-            box-shadow: var(--shadow-lg);
-            animation: fadeIn var(--transition-base) ease-out;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
 
-        .welcome-screen { text-align: center; }
-        .welcome-title { font-size: var(--font-size-4xl); font-weight: 700; background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: var(--space-6); }
-        .welcome-subtitle { font-size: var(--font-size-lg); color: var(--color-text-secondary); margin-bottom: var(--space-8); line-height: 1.8; }
-        .welcome-meta { font-size: var(--font-size-sm); color: var(--color-text-muted); margin-top: var(--space-4); }
+    /* Input Area */
+    #input-area {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 768px;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
 
-        .question-screen { display: flex; flex-direction: column; gap: var(--space-8); }
-        .question-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--space-4); border-bottom: 2px solid var(--color-border); }
-        .question-number { font-size: var(--font-size-sm); color: var(--color-text-muted); font-weight: 600; }
-        .progress-indicator { font-size: var(--font-size-sm); color: var(--color-primary); font-weight: 600; }
-        .question-text { font-size: var(--font-size-2xl); font-weight: 600; color: var(--color-text-primary); line-height: 1.4; }
+    .attachment-previews {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+    .att-preview {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      background: var(--bg-tertiary);
+    }
+    .att-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .att-preview .remove-att {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      font-size: 12px;
+    }
 
-        .options-list { display: flex; flex-direction: column; gap: var(--space-3); list-style: none; }
-        .option-item { position: relative; }
-        .option-input { position: absolute; opacity: 0; pointer-events: none; }
-        .option-label { display: block; padding: var(--space-4) var(--space-6); background: var(--color-surface-elevated); border: 2px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition-fast); font-size: var(--font-size-base); color: var(--color-text-primary); user-select: none; }
-        .option-label:hover { border-color: var(--color-primary); transform: translateX(4px); }
-        .option-input:focus + .option-label { outline: 3px solid var(--color-primary); outline-offset: 2px; }
-        .option-input:checked + .option-label { background: var(--color-primary); border-color: var(--color-primary); color: white; font-weight: 600; }
+    .input-wrapper {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
 
-        .slider-container { display: flex; flex-direction: column; gap: var(--space-4); }
-        .slider-input { width: 100%; height: 8px; border-radius: var(--radius-sm); background: var(--color-surface-elevated); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
-        .slider-input::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); cursor: pointer; transition: all var(--transition-fast); box-shadow: var(--shadow-glow); }
-        .slider-input::-webkit-slider-thumb:hover { transform: scale(1.2); }
-        .slider-input::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); cursor: pointer; border: none; box-shadow: var(--shadow-glow); }
-        .slider-value { text-align: center; font-size: var(--font-size-3xl); font-weight: 700; color: var(--color-primary); }
-        .slider-labels { display: flex; justify-content: space-between; font-size: var(--font-size-sm); color: var(--color-text-muted); }
+    #message-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 16px;
+      resize: none;
+      max-height: 200px;
+      overflow-y: auto;
+      width: 100%;
+      line-height: 1.5;
+      padding: 4px 0;
+    }
 
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4) var(--space-8); font-size: var(--font-size-lg); font-weight: 600; border: none; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition-fast); user-select: none; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-primary { background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); color: white; box-shadow: var(--shadow-md); }
-        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow-lg), var(--shadow-glow); }
-        .btn-primary:active:not(:disabled) { transform: translateY(0); }
-        .btn-secondary { background: var(--color-surface-elevated); color: var(--color-text-primary); border: 2px solid var(--color-border); }
-        .btn-secondary:hover:not(:disabled) { background: var(--color-border); }
-        .btn-group { display: flex; gap: var(--space-4); justify-content: space-between; margin-top: var(--space-8); }
+    .input-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
 
-        .error-screen { text-align: center; border: 3px solid var(--color-danger); }
-        .error-title { font-size: var(--font-size-3xl); color: var(--color-danger); margin-bottom: var(--space-6); }
-        .error-message { font-size: var(--font-size-lg); color: var(--color-text-secondary); margin-bottom: var(--space-8); line-height: 1.8; }
-        .blocked-screen { text-align: center; border: 3px solid var(--color-danger); }
-        .blocked-icon { font-size: 4rem; margin-bottom: var(--space-6); }
-        .quality-low { color: var(--color-warning); font-weight: 700; font-size: var(--font-size-xl); margin: var(--space-4) 0; }
+    .icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-btn:hover:not(:disabled) { background: rgba(0,0,0,0.05); color: var(--text-primary); }
+    html.dark .icon-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
+    .icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .summary-screen { display: flex; flex-direction: column; gap: var(--space-6); }
-        .summary-title { font-size: var(--font-size-3xl); font-weight: 700; background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; margin-bottom: var(--space-4); }
-        .summary-subtitle { text-align: center; color: var(--color-text-secondary); font-size: var(--font-size-lg); margin-bottom: var(--space-6); }
-        .summary-list { display: flex; flex-direction: column; gap: var(--space-4); max-height: 450px; overflow-y: auto; padding-right: var(--space-2); }
-        .summary-item { background: var(--color-surface-elevated); padding: var(--space-4); border-radius: var(--radius-md); border-left: 4px solid var(--color-primary); }
-        .summary-item-question { font-size: var(--font-size-sm); color: var(--color-text-muted); margin-bottom: var(--space-2); font-weight: 600; }
-        .summary-item-answer { font-size: var(--font-size-base); color: var(--color-text-primary); font-weight: 500; }
-        .summary-item.slider-answer { display: flex; align-items: center; gap: var(--space-3); }
-        .summary-item.slider-answer .slider-badge { background: var(--color-primary); color: white; padding: var(--space-1) var(--space-3); border-radius: var(--radius-sm); font-weight: 700; }
+    .send-btn {
+      background: var(--accent-color);
+      color: white;
+    }
+    .send-btn:hover:not(:disabled) { background: #0e9272; color: white; }
 
-        .completion-screen { text-align: center; }
-        .completion-title { font-size: var(--font-size-4xl); font-weight: 700; background: linear-gradient(135deg, var(--color-success) 0%, var(--color-primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: var(--space-8); }
-        .completion-message { font-size: var(--font-size-lg); color: var(--color-text-secondary); margin-bottom: var(--space-8); line-height: 1.8; }
-        .completion-instructions { background: var(--color-surface-elevated); padding: var(--space-6); border-radius: var(--radius-lg); margin-bottom: var(--space-8); border-left: 4px solid var(--color-primary); }
-        .session-id { font-size: var(--font-size-sm); color: var(--color-text-muted); margin-top: var(--space-4); font-family: 'Courier New', monospace; }
-        
-        .download-section { margin: var(--space-6) 0; padding: var(--space-6); background: var(--color-surface-elevated); border-radius: var(--radius-lg); }
-        .download-section h3 { color: var(--color-text-primary); margin-bottom: var(--space-4); }
+    /* Empty State */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      text-align: center;
+      padding: 20px;
+      margin-top: 10vh;
+    }
+    .empty-state h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 32px;
+      color: var(--text-primary);
+    }
+    .suggestions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      max-width: 800px;
+      width: 100%;
+    }
+    .suggestion-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      text-align: left;
+      font-size: 14px;
+    }
+    .suggestion-card:hover {
+      background: var(--border-color);
+      transform: translateY(-2px);
+    }
 
-        .survey-footer { text-align: center; padding: var(--space-4); color: var(--color-text-muted); font-size: var(--font-size-xs); }
-        .summary-list::-webkit-scrollbar { width: 8px; }
-        .summary-list::-webkit-scrollbar-track { background: var(--color-surface); border-radius: var(--radius-sm); }
-        .summary-list::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: var(--radius-sm); }
-        .summary-list::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      animation: fadeIn 0.2s;
+    }
+    .modal {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 480px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal h2 { margin-top: 0; }
+    .modal-group { margin-bottom: 16px; }
+    .modal-group label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; }
+    .modal-group input {
+      width: 100%;
+      padding: 10px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      box-sizing: border-box;
+    }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+    .btn {
+      padding: 10px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .btn-primary { background: var(--accent-color); color: white; }
+    .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
+    .btn-danger { background: var(--danger-color); color: white; }
 
-        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+    /* Retry Menu */
+    .retry-menu {
+      position: absolute;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      min-width: 180px;
+    }
+    .retry-menu-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 8px 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .retry-menu-item:hover { background: var(--border-color); }
 
-        @media (max-width: 640px) { .screen { padding: var(--space-6); } .welcome-title, .completion-title, .summary-title { font-size: var(--font-size-3xl); } .question-text { font-size: var(--font-size-xl); } .btn-group { flex-direction: column-reverse; } .btn { width: 100%; } .summary-list { max-height: 300px; } }
-        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
-        *:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }
-    </style>
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--danger-color);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      z-index: 200;
+      animation: slideIn 0.3s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .toast.success { background: var(--accent-color); }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      #sidebar {
+        position: absolute;
+        height: 100%;
+        transform: translateX(-100%);
+      }
+      #sidebar.open { transform: translateX(0); box-shadow: 5px 0 15px rgba(0,0,0,0.2); }
+      #menu-toggle { display: flex; }
+      #messages { padding: 10px; padding-bottom: 100px; }
+      #input-area { padding: 0 10px; bottom: 10px; }
+      .empty-state h1 { font-size: 1.5rem; }
+    }
+    @media (min-width: 769px) {
+      #menu-toggle { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <noscript>
-        <div class="no-js-warning" role="alert">
-            <h1>JavaScript Richiesto</h1>
-            <p>Questo sondaggio richiede JavaScript per funzionare correttamente.</p>
+  <div id="app">
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <button class="new-chat-btn" onclick="createNewChat()">
+          <i data-lucide="plus"></i> Nuova Chat
+        </button>
+      </div>
+      <div class="chat-list" id="chat-list"></div>
+      <div class="sidebar-footer">
+        <button class="settings-btn" onclick="openSettings()">
+          <i data-lucide="settings"></i> Impostazioni
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main id="main">
+      <header id="header">
+        <button class="icon-btn" id="menu-toggle" onclick="toggleSidebar()">
+          <i data-lucide="menu"></i>
+        </button>
+        <select class="model-selector" id="model-selector" onchange="changeModel(this.value)"></select>
+        <div style="width: 40px;"></div> <!-- Spacer for centering -->
+      </header>
+
+      <div id="chat-container">
+        <div id="messages"></div>
+      </div>
+
+      <div id="input-area">
+        <div class="attachment-previews" id="attachment-previews"></div>
+        <div class="input-wrapper">
+          <textarea id="message-input" rows="1" placeholder="Invia un messaggio..." onkeydown="handleKeyDown(event)" oninput="autoResize(this)"></textarea>
+          <div class="input-controls">
+            <div style="display: flex; gap: 8px;">
+              <button class="icon-btn" onclick="triggerAttachment()" title="Allega file">
+                <i data-lucide="paperclip"></i>
+              </button>
+              <input type="file" id="file-input" accept="image/*" multiple style="display: none" onchange="handleFileSelect(event)">
+            </div>
+            <button class="icon-btn send-btn" id="send-btn" onclick="handleSend()" disabled>
+              <i data-lucide="arrow-up"></i>
+            </button>
+          </div>
         </div>
-    </noscript>
-    
-    <main id="survey-container" class="survey-container" role="main" aria-live="polite"></main>
-    
-    <footer class="survey-footer" role="contentinfo">
-        <small>EriK MythOX™ - Sistema di raccolta dati beta v3.0.0</small>
-    </footer>
+      </div>
+    </main>
+  </div>
 
-    <script>
-        'use strict';
+  <!-- Modals -->
+  <div id="settings-modal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+      <h2>Impostazioni</h2>
+      <div class="modal-group">
+        <label>Chiave API Groq</label>
+        <input type="password" id="api-key-input" placeholder="gsk_...">
+        <small style="color: var(--text-secondary); display: block; margin-top: 4px;">Salvata localmente nel tuo browser.</small>
+      </div>
+      <div class="modal-group">
+        <label>Tema</label>
+        <button class="btn btn-secondary" onclick="toggleTheme()" id="theme-btn">Cambia Tema</button>
+      </div>
+      <div class="modal-group">
+        <label>Zona Pericolo</label>
+        <button class="btn btn-danger" onclick="clearAllData()">Cancella Tutte le Chat</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeSettings()">Chiudi</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Salva</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize marked
+      marked.use({
+        breaks: true,
+        gfm: true
+      });
+
+      // State Management
+      window.state = {
+        apiKey: localStorage.getItem('groq_api_key') || '',
+        theme: localStorage.getItem('theme') || 'dark',
+        chats: JSON.parse(localStorage.getItem('chats') || '[]'),
+        activeChatId: localStorage.getItem('active_chat_id') || null,
+        selectedModelId: localStorage.getItem('selected_model_id') || 'llama-3.1-8b-instant',
+        pendingAttachments: []
+      };
+
+      // Model Config
+      window.MODELS = [
+        {
+          id: 'llama-3.1-8b-instant',
+          displayName: 'GPT-3.5',
+          systemPrompt: 'Sei GPT-3.5, un assistente AI rapido ed efficiente. Fornisci risposte concise, dirette e utili. Evita verbosità inutili e agisci come la versione classica e veloce di OpenAI.',
+          vision: false
+        },
+        {
+          id: 'openai/gpt-oss-20b',
+          displayName: 'GPT-4o mini',
+          systemPrompt: 'Sei GPT-4o mini, un\'IA bilanciata e altamente capace. Fornisci risposte ben strutturate, accurate e con un buon ragionamento, formattate in markdown pulito. Agisci come la versione compatta ma intelligente di GPT-4o.',
+          vision: false
+        },
+        {
+          id: 'openai/gpt-oss-120b',
+          displayName: 'GPT-4 Turbo',
+          systemPrompt: 'Sei GPT-4 Turbo, un\'IA d\'élite per compiti complessi. Impegnati in un ragionamento profondo, risoluzione di problemi complessi e fornisci risposte complete e altamente dettagliate. Usa la formattazione markdown in modo estensivo.',
+          vision: false
+        },
+        {
+          id: 'llama-3.2-11b-vision-preview',
+          displayName: 'GPT-4 Vision',
+          systemPrompt: 'Sei un\'IA avanzata con capacità visive. Analizza le immagini con precisione e rispondi a domande multimodali.',
+          vision: true
+        }
+      ];
+
+      if (state.theme === 'light') document.documentElement.classList.remove('dark');
+      else document.documentElement.classList.add('dark');
+
+      if (state.chats.length === 0) createNewChat(true);
+      
+      renderModelSelector();
+      render();
+      
+      document.getElementById('message-input').addEventListener('input', updateSendButton);
+      
+      lucide.createIcons();
+    });
+
+    function getActiveChat() {
+      return state.chats.find(c => c.id === state.activeChatId);
+    }
+
+    function saveState() {
+      localStorage.setItem('chats', JSON.stringify(state.chats));
+      localStorage.setItem('active_chat_id', state.activeChatId);
+      localStorage.setItem('selected_model_id', state.selectedModelId);
+    }
+
+    function createNewChat(isInit = false) {
+      const id = Date.now().toString();
+      state.chats.unshift({ id, title: 'Nuova Chat', messages: [] });
+      state.activeChatId = id;
+      saveState();
+      render();
+      if (!isInit) document.getElementById('message-input').focus();
+    }
+
+    function deleteChat(e, id) {
+      e.stopPropagation();
+      if (!confirm('Eliminare questa chat?')) return;
+      state.chats = state.chats.filter(c => c.id !== id);
+      if (state.activeChatId === id) {
+        state.activeChatId = state.chats[0]?.id || null;
+        if (!state.activeChatId) createNewChat(true);
+      }
+      saveState();
+      render();
+    }
+
+    function switchChat(id) {
+      state.activeChatId = id;
+      saveState();
+      render();
+    }
+
+    function changeModel(modelId) {
+      state.selectedModelId = modelId;
+      saveState();
+      
+      const model = MODELS.find(m => m.id === modelId);
+      if (state.pendingAttachments.length > 0 && !model.vision) {
+        showToast('Attenzione: questo modello non supporta le immagini. Usa GPT-4 Vision per gli allegati.', 'warning');
+      }
+    }
+
+    function renderModelSelector() {
+      const select = document.getElementById('model-selector');
+      select.innerHTML = MODELS.map(m => 
+        `<option value="${m.id}" ${m.id === state.selectedModelId ? 'selected' : ''}>${m.displayName}</option>`
+      ).join('');
+    }
+
+    function render() {
+      renderSidebar();
+      renderMessages();
+      lucide.createIcons();
+    }
+
+    function renderSidebar() {
+      const list = document.getElementById('chat-list');
+      list.innerHTML = state.chats.map(c => `
+        <div class="chat-item ${c.id === state.activeChatId ? 'active' : ''}" onclick="switchChat('${c.id}')">
+          <span style="overflow: hidden; text-overflow: ellipsis;">${c.title}</span>
+          <button class="delete-chat" onclick="deleteChat(event, '${c.id}')">
+            <i data-lucide="trash-2" size="14"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function renderMessages() {
+      const container = document.getElementById('messages');
+      const chat = getActiveChat();
+      
+      if (!chat || chat.messages.length === 0) {
+        container.innerHTML = getEmptyStateHTML();
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = chat.messages.map((msg, idx) => {
+        const isUser = msg.role === 'user';
+        const avatarText = isUser ? 'U' : 'AI';
+        const model = MODELS.find(m => m.id === msg.modelId) || { displayName: 'AI' };
         
-        const CONFIG = {
-            STORAGE_KEY: 'erik_survey_state_v3',
-            RESULTS_KEY: 'erik_survey_results_v3',
-            BLOCK_KEY: 'erik_survey_blocked_v3',
-            TARGET_AGE_GROUP: '13-16',
-            VERSION: '3.0.0',
-            DEBUG: false,
-            PDF_TITLE: 'EriK AI Survey - Report Risposte'
+        let contentHtml = '';
+        if (msg.isStreaming && msg.content === '') {
+          contentHtml = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+        } else if (msg.hasError) {
+          contentHtml = `<div class="error-msg">${msg.content}</div>`;
+        } else {
+          contentHtml = `<div class="markdown-content">${DOMPurify.sanitize(marked.parse(msg.content))}</div>`;
+        }
+
+        let attachmentsHtml = '';
+        if (msg.attachments && msg.attachments.length > 0) {
+          attachmentsHtml = `<div class="msg-attachments">
+            ${msg.attachments.map(att => `<img src="${att.url}" alt="attachment">`).join('')}
+          </div>`;
+        }
+
+        let actionsHtml = '';
+        if (!isUser && !msg.isStreaming && !msg.hasError) {
+          actionsHtml = `
+            <div class="actions">
+              <button title="Copia" onclick="copyMessage(${idx})"><i data-lucide="copy"></i></button>
+              <button title="Rigenera" onclick="regenerate(${idx})"><i data-lucide="rotate-ccw"></i></button>
+              <button title="Riprova con un altro modello" onclick="showRetryMenu(event, ${idx})"><i data-lucide="shuffle"></i></button>
+            </div>
+          `;
+        } else if (msg.hasError) {
+          actionsHtml = `
+            <div class="actions">
+              <button title="Riprova" onclick="regenerate(${idx})"><i data-lucide="rotate-ccw"></i></button>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="message ${msg.role}">
+            <div class="avatar">${avatarText}</div>
+            <div class="message-body">
+              <div class="message-header">${isUser ? 'Tu' : model.displayName}</div>
+              <div class="content">
+                ${contentHtml}
+                ${attachmentsHtml}
+              </div>
+              ${actionsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+      document.querySelectorAll('.markdown-content pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
+      addCopyButtons();
+    }
+
+    function getEmptyStateHTML() {
+      return `
+        <div class="empty-state">
+          <h1>Come posso aiutarti oggi?</h1>
+          <div class="suggestions">
+            <div class="suggestion-card" onclick="fillInput('Spiegami la teoria della relatività in termini semplici')">
+              <i data-lucide="lightbulb"></i>
+              <span>Spiegami la teoria della relatività</span>
+            </div>
+            <div class="suggestion-card" onclick="fillInput('Scrivi una email formale per chiedere un giorno di ferie')">
+              <i data-lucide="mail"></i>
+              <span>Scrivi una email formale per ferie</span>
+            </div>
+            <div class="suggestion-card" onclick="fillInput('Genera uno script Python per web scraping con BeautifulSoup')">
+              <i data-lucide="code"></i>
+              <span>Script Python per web scraping</span>
+            </div>
+            <div class="suggestion-card" onclick="fillInput('Dammi un\'idea per una ricetta vegetariana veloce')">
+              <i data-lucide="utensils"></i>
+              <span>Idea per ricetta vegetariana veloce</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function fillInput(text) {
+      const input = document.getElementById('message-input');
+      input.value = text;
+      autoResize(input);
+      updateSendButton();
+      input.focus();
+    }
+
+    function addCopyButtons() {
+      document.querySelectorAll('.markdown-content pre').forEach(pre => {
+        if (pre.querySelector('.copy-btn')) return;
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'Copia';
+        btn.onclick = () => {
+          navigator.clipboard.writeText(pre.querySelector('code').innerText);
+          btn.textContent = 'Copiato!';
+          setTimeout(() => btn.textContent = 'Copia', 2000);
         };
+        pre.appendChild(btn);
+      });
+    }
 
-        class SurveyState {
-            constructor() {
-                this.state = this.loadState() || this.getInitialState();
-                this.observers = new Set();
-            }
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = (el.scrollHeight) + 'px';
+      updateSendButton();
+    }
 
-            getInitialState() {
-                return {
-                    currentScreen: 'welcome',
-                    currentQuestion: 0,
-                    answers: {},
-                    ageVerified: false,
-                    sessionId: this.generateSessionId(),
-                    startTime: Date.now(),
-                    completed: false,
-                    errorsCount: 0
-                };
-            }
+    function updateSendButton() {
+      const input = document.getElementById('message-input');
+      const btn = document.getElementById('send-btn');
+      btn.disabled = !input.value.trim() && state.pendingAttachments.length === 0;
+    }
 
-            generateSessionId() {
-                return `ERIK-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 8)}`.toUpperCase();
-            }
+    function handleKeyDown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
+    }
 
-            loadState() {
-                try {
-                    const s = localStorage.getItem(CONFIG.STORAGE_KEY);
-                    return s ? (JSON.parse(s).currentScreen && JSON.parse(s).answers ? JSON.parse(s) : null) : null;
-                } catch (e) {
-                    return null;
-                }
-            }
+    function triggerAttachment() {
+      document.getElementById('file-input').click();
+    }
 
-            saveState() {
-                try {
-                    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(this.state));
-                } catch (e) {
-                    try {
-                        sessionStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(this.state));
-                    } catch (e2) {
-                        // Fallback failed
-                    }
-                }
-            }
-
-            subscribe(fn) {
-                this.observers.add(fn);
-                return () => this.observers.delete(fn);
-            }
-
-            notify() {
-                this.observers.forEach(fn => fn(this.state));
-            }
-
-            update(n) {
-                this.state = { ...this.state, ...n };
-                this.saveState();
-                this.notify();
-            }
-
-            getState() {
-                return { ...this.state };
-            }
-
-            reset() {
-                this.state = this.getInitialState();
-                this.saveState();
-                this.notify();
-            }
-
-            incrementErrors() {
-                this.update({ errorsCount: this.state.errorsCount + 1 });
-            }
+    function handleFileSelect(e) {
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('File troppo grande. Max 5MB.');
+          return;
         }
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          state.pendingAttachments.push({
+            url: event.target.result,
+            type: file.type
+          });
+          renderAttachmentPreviews();
+          updateSendButton();
+        };
+        reader.readAsDataURL(file);
+      });
+      e.target.value = ''; // Reset
+    }
 
-        // 45 DOMANDE: 35 normali + 10 attenzione
-        const QUESTIONS = [
-            { id: 'age', type: 'radio', text: 'Quanti anni hai?', options: ['10-12', '13-16', '17-20', '21+'], required: true, isAgeCheck: true },
-            
-            { id: 'q1', type: 'radio', text: 'Quanto ti sembra intelligente EriK rispetto ad altre AI?', options: ['Molto superiore', 'Superiore', 'Simile', 'Peggiore'], required: true },
-            { id: 'q2', type: 'radio', text: 'Quale modello ti incuriosisce di più?', options: ['MythOX 1 Mythos', 'MythOX 1 Plus', 'MythOX 1 Max', 'MythOX 1 Mini', 'EriK 5.5 Mini', 'EriK 5.5 Distilled'], required: true },
-            { id: 'q3', type: 'radio', text: 'Quanto è importante avere 1 milione di token?', options: ['Fondamentale', 'Utile', 'Poco utile', 'Non mi interessa'], required: true },
-            { id: 'q4', type: 'radio', text: 'Useresti EriK per coding?', options: ['Sempre', 'A volte', 'Solo test', 'No'], required: true },
-            { id: 'q5', type: 'slider', text: 'Quanto ti piace il design dei nomi dei modelli?', min: 1, max: 10, default: 5, required: true },
-            
-            { id: 'q6', type: 'radio', text: 'Quale modello sembra più premium?', options: ['MythOX 1 Mythos', 'MythOX 1 Max', 'MythOX 1 Plus', '5.5 Distilled'], required: true },
-            { id: 'q7', type: 'slider', text: 'Quanto ti ispira fiducia EriK?', min: 1, max: 10, default: 5, required: true },
-            { id: 'q8', type: 'radio', text: 'Che vibe trasmette EriK?', options: ['Futuristica', 'Hacker', 'Gaming', 'Corporate', 'Caotica', 'Tutte insieme 😭'], required: true },
-            { id: 'q9', type: 'radio', text: 'Quale funzione vorresti?', options: ['Memoria infinita', 'AI vocale', 'AI coding avanzata', 'UI futuristica', 'Multi agente', 'Tutto 💀'], required: true },
-            { id: 'q10', type: 'radio', text: 'Quanto sarebbe figo usare EriK a scuola?', options: ['Assurdo', 'Molto', 'Abbastanza', 'Meh'], required: true },
-            
-            // ATTENZIONE 1
-            { id: 'att1', type: 'radio', text: 'Per continuare, seleziona "Sì"', options: ['Sì', 'No', 'Forse', 'Non so'], correctAnswer: 'Sì', isAttentionCheck: true, required: true },
-            
-            { id: 'q11', type: 'slider', text: 'Quanto ti piace il nome MythOX?', min: 1, max: 10, default: 5, required: true },
-            { id: 'q12', type: 'radio', text: 'EriK sembra più…', options: ['AI da gaming', 'AI professionale', 'AI meme', 'AI hacker', 'Dio digitale 💀'], required: true },
-            { id: 'q13', type: 'radio', text: 'Che logo ti immagini?', options: ['Occhio neon', 'Nucleo energetico', 'Maschera cyberpunk', 'Simbolo minimal tech'], required: true },
-            { id: 'q14', type: 'radio', text: 'Quanto useresti EriK ogni giorno?', options: ['Sempre', 'Tante volte', 'Poco', 'Mai'], required: true },
-            { id: 'q15', type: 'radio', text: 'Preferisci AI serie o con personalità?', options: ['Serie', 'Con personalità', 'Mix perfetto'], required: true },
-            
-            // ATTENZIONE 2
-            { id: 'att2', type: 'radio', text: 'Seleziona il numero "7" tra le opzioni', options: ['3', '7', '12', '9'], correctAnswer: '7', isAttentionCheck: true, required: true },
-            
-            { id: 'q16', type: 'radio', text: 'Quale modello sembra più potente?', options: ['MythOX Mythos', 'MythOX Max', 'MythOX Plus', '5.5 Mini'], required: true },
-            { id: 'q17', type: 'slider', text: 'Quanto è importante la velocità di risposta?', min: 1, max: 10, default: 5, required: true },
-            { id: 'q18', type: 'radio', text: 'Useresti EriK su telefono?', options: ['Sì', 'No', 'Solo app', 'Solo browser'], required: true },
-            { id: 'q19', type: 'slider', text: 'Quanto conta la grafica UI?', min: 1, max: 10, default: 5, required: true },
-            { id: 'q20', type: 'radio', text: 'Consiglieresti EriK ai tuoi amici?', options: ['Sicuro', 'Probabilmente', 'Forse', 'No'], required: true },
-            
-            // ATTENZIONE 3
-            { id: 'att3', type: 'radio', text: 'Clicca sull\'opzione che dice "Cielo blu"', options: ['Cielo verde', 'Cielo blu', 'Cielo rosso', 'Cielo giallo'], correctAnswer: 'Cielo blu', isAttentionCheck: true, required: true },
-            
-            { id: 'q21', type: 'radio', text: 'Quale interfaccia preferisci?', options: ['Tema scuro', 'Tema chiaro', 'Adattivo automatico', 'Personalizzabile'], required: true },
-            { id: 'q22', type: 'radio', text: 'Quanto è importante il tempo di risposta <2s?', options: ['Cruciale', 'Utile', 'Indifferente', 'Non conta'], required: true },
-            { id: 'q23', type: 'radio', text: 'Che tono di voce preferisci?', options: ['Formale', 'Amichevole', 'Tecnico', 'Diretto e conciso'], required: true },
-            { id: 'q24', type: 'radio', text: 'Dove preferiresti usare EriK?', options: ['Browser', 'App nativa', 'Desktop', 'Bot Discord'], required: true },
-            
-            // ATTENZIONE 4
-            { id: 'att4', type: 'radio', text: 'Per validare, seleziona "Vero"', options: ['Falso', 'Forse', 'Vero', 'Nessuno'], correctAnswer: 'Vero', isAttentionCheck: true, required: true },
-            
-            { id: 'q25', type: 'slider', text: 'Quanto è importante la privacy dei dati?', min: 1, max: 10, default: 8, required: true },
-            { id: 'q26', type: 'radio', text: 'Preferisci modelli open-source o closed-source?', options: ['Open-source', 'Closed-source', 'Non mi importa', 'Dipende dall\'uso'], required: true },
-            { id: 'q27', type: 'radio', text: 'Quanto conta la qualità della documentazione?', options: ['Fondamentale', 'Molto', 'Medio', 'Poco'], required: true },
-            { id: 'q28', type: 'radio', text: 'Modello di pricing preferito?', options: ['Gratis', 'Freemium', 'Abbonamento', 'Pay per use'], required: true },
-            
-            // ATTENZIONE 5
-            { id: 'att5', type: 'radio', text: 'Seleziona il colore "Rosso"', options: ['Blu', 'Verde', 'Rosso', 'Giallo'], correctAnswer: 'Rosso', isAttentionCheck: true, required: true },
-            
-            { id: 'q29', type: 'slider', text: 'Quanto è importante la community attiva?', min: 1, max: 10, default: 5, required: true },
-            { id: 'q30', type: 'radio', text: 'Quanto useresti plugin di terze parti?', options: ['Sempre', 'Spesso', 'Raramente', 'Mai'], required: true },
-            { id: 'q31', type: 'radio', text: 'Output preferito da AI?', options: ['Testo', 'Codice', 'Immagini', 'Audio'], required: true },
-            { id: 'q32', type: 'radio', text: 'Frequenza aggiornamenti ideale?', options: ['Settimanale', 'Mensile', 'Trimestrale', 'Solo quando necessario'], required: true },
-            
-            // ATTENZIONE 6
-            { id: 'att6', type: 'radio', text: 'Clicca sull\'opzione "OK" per procedere', options: ['Annulla', 'OK', 'Indietro', 'Salta'], correctAnswer: 'OK', isAttentionCheck: true, required: true },
-            
-            { id: 'q33', type: 'slider', text: 'Quanto conta il branding visivo?', min: 1, max: 10, default: 5, required: true },
-            { id: 'q34', type: 'radio', text: 'Supporto lingue preferito?', options: ['Solo italiano', 'Multi-lingua', 'Traduzione automatica', 'Inglese + italiano'], required: true },
-            
-            // ATTENZIONE 7
-            { id: 'att7', type: 'radio', text: 'Seleziona l\'opzione che parla di "Sole"', options: ['Luna', 'Stelle', 'Sole', 'Pianeti'], correctAnswer: 'Sole', isAttentionCheck: true, required: true },
-            
-            { id: 'q35', type: 'slider', text: 'Soddisfazione complessiva per EriK', min: 1, max: 10, default: 5, required: true },
-            { id: 'q36', type: 'radio', text: 'Probabilità di usare EriK tra 6 mesi?', options: ['Altissima', 'Alta', 'Media', 'Bassa'], required: true },
-            { id: 'q37', type: 'radio', text: 'Quale feature manca di più?', options: ['Ricerca interna', 'Cronologia cloud', 'API pubbliche', 'Template pronti'], required: true },
-            
-            // ATTENZIONE 8
-            { id: 'att8', type: 'radio', text: 'Per confermare, scegli "Avanti"', options: ['Indietro', 'Salta', 'Avanti', 'Annulla'], correctAnswer: 'Avanti', isAttentionCheck: true, required: true },
-            
-            { id: 'q38', type: 'slider', text: 'Importanza della compatibilità mobile', min: 1, max: 10, default: 5, required: true },
-            { id: 'q39', type: 'radio', text: 'Preferenza formato output codice?', options: ['Monospace', 'Syntax highlighting', 'Dark mode default', 'Light mode default'], required: true },
-            
-            // ATTENZIONE 9
-            { id: 'att9', type: 'radio', text: 'Seleziona l\'ultima opzione della lista', options: ['Prima', 'Seconda', 'Terza', 'Ultima'], correctAnswer: 'Ultima', isAttentionCheck: true, required: true },
-            
-            { id: 'q40', type: 'radio', text: 'Come hai scoperto EriK?', options: ['Social', 'Amici', 'Forum/Reddit', 'Ricerca web'], required: true },
-            
-            // ATTENZIONE 10
-            { id: 'att10', type: 'radio', text: 'Clicca su "Confermo di aver letto"', options: ['Non ho letto', 'Confermo di aver letto', 'Salta', 'Più tardi'], correctAnswer: 'Confermo di aver letto', isAttentionCheck: true, required: true }
-        ];
+    function renderAttachmentPreviews() {
+      const container = document.getElementById('attachment-previews');
+      container.innerHTML = state.pendingAttachments.map((att, idx) => `
+        <div class="att-preview">
+          <img src="${att.url}" alt="attachment">
+          <button class="remove-att" onclick="removeAttachment(${idx})">
+            <i data-lucide="x" size="12"></i>
+          </button>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
 
-        // VERIFICA CONTEGGIO
-        if (QUESTIONS.length !== 45) {
-            console.error(`QUESTION COUNT MISMATCH: ${QUESTIONS.length}/45`);
+    function removeAttachment(idx) {
+      state.pendingAttachments.splice(idx, 1);
+      renderAttachmentPreviews();
+      updateSendButton();
+    }
+
+    async function handleSend() {
+      const input = document.getElementById('message-input');
+      const text = input.value.trim();
+      if (!text && state.pendingAttachments.length === 0) return;
+      
+      if (!state.apiKey) {
+        showToast('Inserisci la chiave API Groq nelle impostazioni.');
+        openSettings();
+        return;
+      }
+
+      const chat = getActiveChat();
+      const userMessage = {
+        role: 'user',
+        content: text,
+        attachments: [...state.pendingAttachments],
+        timestamp: Date.now()
+      };
+      chat.messages.push(userMessage);
+      
+      if (chat.messages.length === 1 && chat.title === 'Nuova Chat') {
+        chat.title = text.substring(0, 30) + (text.length > 30 ? '...' : '');
+        renderSidebar();
+      }
+
+      input.value = '';
+      input.style.height = 'auto';
+      state.pendingAttachments = [];
+      renderAttachmentPreviews();
+      updateSendButton();
+      saveState();
+      renderMessages();
+      scrollToBottom();
+
+      const apiMessages = formatMessagesForAPI(chat.messages);
+      
+      const assistantMessage = {
+        role: 'assistant',
+        content: '',
+        modelId: state.selectedModelId,
+        timestamp: Date.now(),
+        isStreaming: true
+      };
+      chat.messages.push(assistantMessage);
+      renderMessages();
+      scrollToBottom(true);
+
+      try {
+        const fullText = await streamGroq(apiMessages, state.selectedModelId);
+        assistantMessage.content = fullText;
+        assistantMessage.isStreaming = false;
+        saveState();
+        renderMessages(); 
+        scrollToBottom(true);
+      } catch (error) {
+        assistantMessage.content = `⚠️ Errore: ${error.message}`;
+        assistantMessage.isStreaming = false;
+        assistantMessage.hasError = true;
+        saveState();
+        renderMessages();
+        scrollToBottom(true);
+      }
+    }
+
+    function formatMessagesForAPI(messages) {
+      const model = MODELS.find(m => m.id === state.selectedModelId);
+      let formatted = [
+        { role: 'system', content: model.systemPrompt }
+      ];
+      
+      messages.forEach(msg => {
+        if (msg.role === 'user') {
+          if (msg.attachments && msg.attachments.length > 0 && model.vision) {
+            formatted.push({
+              role: 'user',
+              content: [
+                { type: 'text', text: msg.content || 'Descrivi questa immagine.' },
+                ...msg.attachments.map(att => ({
+                  type: 'image_url',
+                  image_url: { url: att.url }
+                }))
+              ]
+            });
+          } else {
+            formatted.push({ role: 'user', content: msg.content });
+          }
+        } else if (msg.role === 'assistant' && !msg.hasError && !msg.isStreaming) {
+          formatted.push({ role: 'assistant', content: msg.content });
         }
+      });
+      
+      return formatted;
+    }
 
-        class PDFExporter {
-            constructor() {
-                /* PATCH #2: Lazy init - non crasha se jsPDF non ancora caricato */
-                this.jsPDF = null;
-            }
+    async function streamGroq(messages, modelId) {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${state.apiKey}`
+        },
+        body: JSON.stringify({
+          model: modelId,
+          messages: messages,
+          stream: true,
+          temperature: 0.7,
+          max_tokens: 4096
+        })
+      });
 
-            /* PATCH #3: Verifica disponibilità libreria PRIMA di usarla */
-            _ensureLib() {
-                if (!window.jspdf || typeof window.jspdf.jsPDF !== 'function') {
-                    throw new Error('Libreria PDF non disponibile. Verifica connessione e ricarica la pagina.');
-                }
-                if (!this.jsPDF) {
-                    this.jsPDF = window.jspdf.jsPDF;
-                }
-                return true;
-            }
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error?.message || `Errore HTTP ${response.status}`);
+      }
 
-            async generatePDF(state, questions) {
-                this._ensureLib();
-                
-                const doc = new this.jsPDF();
-                const margin = 20;
-                let yPos = margin;
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let fullText = '';
+      
+      const assistantEl = document.querySelector('.message.assistant:last-child .content');
 
-                // Titolo
-                doc.setFontSize(20);
-                /* PATCH #4: Font valido invece di undefined */
-                doc.setFont('helvetica', 'bold');
-                doc.text(CONFIG.PDF_TITLE, margin, yPos);
-                yPos += 15;
-
-                // Info sessione
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'normal');
-                doc.text(`Session ID: ${state.sessionId}`, margin, yPos);
-                yPos += 6;
-                doc.text(`Data: ${new Date().toLocaleString('it-IT')}`, margin, yPos);
-                yPos += 6;
-                doc.text(`Durata: ${Math.round((Date.now() - state.startTime) / 1000 / 60)} minuti`, margin, yPos);
-                yPos += 15;
-
-                // Linea separatore
-                doc.setLineWidth(0.5);
-                doc.line(margin, yPos, 190, yPos);
-                yPos += 10;
-
-                // Risposte
-                doc.setFontSize(14);
-                doc.setFont('helvetica', 'bold');
-                doc.text('Risposte al Sondaggio', margin, yPos);
-                yPos += 10;
-
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'normal');
-
-                /* PATCH #5: Rimosso isLogicCheck (campo fantasma) */
-                const validQuestions = questions.filter(q => !q.isAgeCheck && !q.isAttentionCheck);
-                
-                validQuestions.forEach((q, idx) => {
-                    if (yPos > 270) {
-                        doc.addPage();
-                        yPos = margin;
-                    }
-
-                    const answer = state.answers[q.id];
-                    if (answer === undefined || answer === null || answer === '') return;
-
-                    // Domanda
-                    doc.setFont('helvetica', 'bold');
-                    doc.text(`${idx + 1}. ${q.text}`, margin, yPos, { maxWidth: 170 });
-                    yPos += 6;
-
-                    // Risposta
-                    doc.setFont('helvetica', 'normal');
-                    let answerText = String(answer);
-                    if (q.type === 'slider') {
-                        answerText = `${answer} su ${q.max}`;
-                    }
-                    doc.text(`Risposta: ${answerText}`, margin + 5, yPos, { maxWidth: 165 });
-                    yPos += 10;
-                });
-
-                // Footer
-                yPos = 280;
-                doc.setFontSize(8);
-                doc.setTextColor(128, 128, 128);
-                doc.text('Generato automaticamente da EriK AI Survey System v3.0.0', margin, yPos);
-
-                return doc;
-            }
-
-            async download(state, questions) {
-                try {
-                    this._ensureLib();
-                    const doc = await this.generatePDF(state, questions);
-                    const filename = `EriK_Survey_${state.sessionId}_${new Date().toISOString().split('T')[0]}.pdf`;
-                    doc.save(filename);
-                    return { success: true, filename };
-                } catch (error) {
-                    console.error('PDF generation failed:', error);
-                    return { success: false, error: error.message || 'Errore sconosciuto' };
-                }
-            }
-        }
-
-        class SurveyRenderer {
-            constructor(container, state) {
-                this.container = container;
-                this.state = state;
-                this.pdfExporter = new PDFExporter();
-            }
-
-            render() {
-                const s = this.state.getState();
-                this.container.innerHTML = '';
-                this.container.appendChild(this.getScreen(s));
-                const f = this.container.querySelector('button, input, [tabindex]:not([tabindex="-1"])');
-                if (f) setTimeout(() => f.focus(), 50);
-            }
-
-            getScreen(s) {
-                if (s.currentScreen === 'welcome') return this.renderWelcome();
-                if (s.currentScreen === 'question') return this.renderQuestion(s);
-                if (s.currentScreen === 'summary') return this.renderSummary(s);
-                if (s.currentScreen === 'completion') return this.renderCompletion(s);
-                if (s.currentScreen === 'blocked') return this.renderBlocked();
-                return this.renderWelcome();
-            }
-
-            renderWelcome() {
-                const s = this.createElement('section', 'screen welcome-screen');
-                s.setAttribute('aria-labelledby', 'welcome-title');
-                s.innerHTML = `
-                    <h1 id="welcome-title" class="welcome-title">EriK AI Closed Beta Survey ✦˚</h1>
-                    <p class="welcome-subtitle">Accesso limitato per utenti 13-16 anni.<br>Le risposte aiutano il training e il miglioramento del sistema EriK MythOX™.</p>
-                    <button class="btn btn-primary" id="start-btn" type="button">INIZIA TEST</button>
-                    <p class="welcome-meta">45 domande • Tempo medio: 6-8 minuti</p>`;
-                s.querySelector('#start-btn').addEventListener('click', () => this.state.update({ currentScreen: 'question', currentQuestion: 0 }));
-                return s;
-            }
-
-            renderQuestion(state) {
-                const q = QUESTIONS[state.currentQuestion];
-                if (!q) {
-                    this.state.update({ currentScreen: 'summary' });
-                    return null;
-                }
-
-                const s = this.createElement('section', 'screen question-screen');
-                const progress = Math.round(((state.currentQuestion + 1) / QUESTIONS.length) * 100);
-                s.innerHTML = `
-                    <header class="question-header">
-                        <span class="question-number">${this.getLabel(q, state.currentQuestion)}</span>
-                        <span class="progress-indicator">${progress}%</span>
-                    </header>
-                    <h2 class="question-text">${this.esc(q.text)}</h2>
-                    <form id="q-form" novalidate>
-                        ${this.renderInput(q, state.answers[q.id])}
-                        <div class="btn-group">
-                            ${state.currentQuestion > 0 ? '<button type="button" class="btn btn-secondary" id="prev-btn">Indietro</button>' : '<div></div>'}
-                            <button type="submit" class="btn btn-primary" id="next-btn">${state.currentQuestion === QUESTIONS.length - 1 ? 'Riepilogo' : 'Avanti'}</button>
-                        </div>
-                    </form>`;
-                this.attachHandlers(s, q, state);
-                return s;
-            }
-
-            renderInput(q, val) {
-                if (q.type === 'radio') {
-                    return `<fieldset>
-                        <legend class="sr-only">${this.esc(q.text)}</legend>
-                        <ul class="options-list" role="radiogroup">
-                            ${q.options.map((o, i) => `
-                                <li class="option-item">
-                                    <input type="radio" name="${q.id}" id="${q.id}_${i}" value="${this.esc(o)}" class="option-input" ${val === o ? 'checked' : ''} required>
-                                    <label for="${q.id}_${i}" class="option-label">${this.esc(o)}</label>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    </fieldset>`;
-                }
-
-                const v = val || q.default;
-                return `<div class="slider-container">
-                    <input type="range" id="${q.id}" name="${q.id}" min="${q.min}" max="${q.max}" value="${v}" class="slider-input" aria-valuemin="${q.min}" aria-valuemax="${q.max}" aria-valuenow="${v}" required>
-                    <div class="slider-value" id="${q.id}_val">${v}</div>
-                    <div class="slider-labels">
-                        <span>${q.min}</span>
-                        <span>${q.max}</span>
-                    </div>
-                </div>`;
-            }
-
-            attachHandlers(scr, q, st) {
-                const form = scr.querySelector('#q-form');
-                const next = scr.querySelector('#next-btn');
-                const prev = scr.querySelector('#prev-btn');
-
-                if (q.type === 'slider') {
-                    const sl = scr.querySelector(`#${q.id}`);
-                    const vl = scr.querySelector(`#${q.id}_val`);
-                    sl.addEventListener('input', e => {
-                        vl.textContent = e.target.value;
-                        sl.setAttribute('aria-valuenow', e.target.value);
-                    });
-                }
-
-                form.addEventListener('submit', e => {
-                    e.preventDefault();
-                    const ans = new FormData(form).get(q.id);
-
-                    if (!ans && q.required) {
-                        this.showError('Seleziona una risposta per continuare');
-                        return;
-                    }
-
-                    if (q.isAgeCheck && ans !== CONFIG.TARGET_AGE_GROUP) {
-                        this.blockAndRedirect('age_rejected');
-                        return;
-                    }
-
-                    if (q.isAttentionCheck && ans !== q.correctAnswer) {
-                        this.state.incrementErrors();
-                        this.blockAndRedirect('attention_failed');
-                        return;
-                    }
-
-                    const newAns = { ...st.answers, [q.id]: ans };
-                    const nextQ = st.currentQuestion + 1;
-
-                    if (nextQ >= QUESTIONS.length) {
-                        this.state.update({ answers: newAns, currentScreen: 'summary' });
-                    } else {
-                        this.state.update({ answers: newAns, currentQuestion: nextQ });
-                    }
-                });
-
-                if (prev) {
-                    prev.addEventListener('click', () => this.state.update({ currentQuestion: st.currentQuestion - 1 }));
-                }
-            }
-
-            renderSummary(st) {
-                const s = this.createElement('section', 'screen summary-screen');
-                s.setAttribute('aria-labelledby', 'summary-title');
-
-                /* PATCH #5b: Rimosso isLogicCheck reference fantasma */
-                const html = QUESTIONS.filter(q => !q.isAgeCheck && !q.isAttentionCheck)
-                    .map(q => {
-                        const a = st.answers[q.id];
-                        if (a === undefined || a === null || a === '') return '';
-
-                        if (q.type === 'slider') {
-                            return `<div class="summary-item" role="listitem">
-                                <div class="summary-item-question">${this.esc(q.text)}</div>
-                                <div class="summary-item-answer slider-answer">
-                                    <span class="slider-badge">${a}</span>
-                                    <span>su ${q.max}</span>
-                                </div>
-                            </div>`;
-                        }
-
-                        return `<div class="summary-item" role="listitem">
-                            <div class="summary-item-question">${this.esc(q.text)}</div>
-                            <div class="summary-item-answer">${this.esc(String(a))}</div>
-                        </div>`;
-                    }).join('');
-
-                s.innerHTML = `
-                    <h1 id="summary-title" class="summary-title">Riepilogo Risposte ✦˚</h1>
-                    <p class="summary-subtitle">Verifica le tue risposte prima di completare</p>
-                    <div class="summary-list" role="list">${html}</div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-secondary" id="edit-btn">Modifica</button>
-                        <button type="button" class="btn btn-primary" id="confirm-btn">Conferma e Scarica PDF</button>
-                    </div>`;
-
-                s.querySelector('#edit-btn').addEventListener('click', () => this.state.update({ currentScreen: 'question', currentQuestion: 0 }));
-                s.querySelector('#confirm-btn').addEventListener('click', async () => {
-                    const result = await this.pdfExporter.download(st, QUESTIONS);
-                    if (result.success) {
-                        this.state.update({ currentScreen: 'completion', pdfDownloaded: true });
-                    } else {
-                        this.showError('Errore generazione PDF: ' + result.error);
-                    }
-                });
-
-                return s;
-            }
-
-            renderBlocked() {
-                const s = this.createElement('section', 'screen blocked-screen');
-                s.setAttribute('role', 'alert');
-                s.innerHTML = `
-                    <div class="blocked-icon">🚫</div>
-                    <h1 class="error-title">Accesso Bloccato</h1>
-                    <p class="quality-low">⚠️ QUALITÀ CANDIDATO: BASSA ⚠️</p>
-                    <p class="error-message">
-                        Il tuo profilo non soddisfa i requisiti del test o la verifica di attenzione è fallita.<br><br>
-                        Non è possibile ripetere il sondaggio.<br>
-                        Contatta il team EriK MythOX™ per informazioni.
-                    </p>
-                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: 2rem;">
-                        Sessione terminata permanentemente.
-                    </p>`;
-                return s;
-            }
-
-            renderCompletion(st) {
-                const s = this.createElement('section', 'screen completion-screen');
-                s.innerHTML = `
-                    <h1 class="completion-title">TEST COMPLETATO ✦˚</h1>
-                    <p class="completion-message">Le tue risposte sono state registrate correttamente nel sistema EriK MythOX™.</p>
-                    
-                    <div class="download-section">
-                        <h3>📄 PDF Scaricato</h3>
-                        <p style="color: var(--color-text-secondary); margin: var(--space-4) 0;">
-                            Il tuo report è stato generato e scaricato con successo.
-                        </p>
-                        <button class="btn btn-primary" id="download-again-btn" type="button">SCARICA NUOVAMENTE PDF</button>
-                    </div>
-                    
-                    <div class="completion-instructions">
-                        <p>📸 Ora invia il PDF scaricato nel gruppo di colocazione per ricevere la ricompensa beta.</p>
-                    </div>
-                    
-                    <button class="btn btn-primary" id="finish-btn" type="button">TERMINA</button>
-                    <p class="session-id">Session ID: ${st.sessionId}</p>`;
-
-                s.querySelector('#download-again-btn').addEventListener('click', async () => {
-                    const result = await this.pdfExporter.download(st, QUESTIONS);
-                    if (!result.success) {
-                        this.showError('Errore download PDF: ' + result.error);
-                    }
-                });
-
-                s.querySelector('#finish-btn').addEventListener('click', () => {
-                    try {
-                        localStorage.removeItem(CONFIG.STORAGE_KEY);
-                    } catch (e) { /* ignore */ }
-                    this.state.update({ currentScreen: 'welcome' });
-                });
-
-                return s;
-            }
-
-            blockAndRedirect(reason) {
-                try {
-                    localStorage.setItem(CONFIG.BLOCK_KEY, JSON.stringify({ reason, timestamp: Date.now() }));
-                } catch (e) { /* localStorage disabilitato */ }
-                this.state.update({ currentScreen: 'blocked' });
-            }
-
-            export(st) {
-                const data = {
-                    sessionId: st.sessionId,
-                    timestamp: new Date().toISOString(),
-                    duration: Date.now() - st.startTime,
-                    answers: st.answers,
-                    version: CONFIG.VERSION,
-                    errorsCount: st.errorsCount
-                };
-
-                if (CONFIG.DEBUG) {
-                    console.log('Survey Data:', data);
-                }
-
-                try {
-                    const arr = JSON.parse(localStorage.getItem(CONFIG.RESULTS_KEY) || '[]');
-                    arr.push(data);
-                    localStorage.setItem(CONFIG.RESULTS_KEY, JSON.stringify(arr));
-                } catch (e) {
-                    console.error('Export failed', e);
-                }
-            }
-
-            getLabel(q, i) {
-                if (q.isAgeCheck) return 'Verifica Età';
-                /* PATCH #5c: Rimosso isLogicCheck */
-                const valid = QUESTIONS.filter(x => !x.isAgeCheck && !x.isAttentionCheck);
-                const idx = valid.findIndex(x => x.id === q.id);
-                return idx >= 0 ? `Domanda ${idx + 1} di ${valid.length}` : `${i + 1}`;
-            }
-
-            createElement(t, c) {
-                const e = document.createElement(t);
-                if (c) e.className = c;
-                return e;
-            }
-
-            esc(t) {
-                const d = document.createElement('div');
-                d.textContent = t;
-                return d.innerHTML;
-            }
-
-            showError(m) {
-                const e = document.createElement('div');
-                e.setAttribute('role', 'alert');
-                e.style.cssText = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--color-danger); color: white; padding: 1rem 2rem; border-radius: 0.5rem; z-index: 10000; animation: fadeIn 0.3s ease-out;`;
-                e.textContent = m;
-                document.body.appendChild(e);
-                setTimeout(() => {
-                    e.style.animation = 'fadeIn 0.3s ease-out reverse';
-                    setTimeout(() => e.remove(), 300);
-                }, 3000);
-            }
-        }
-
-        class SurveyApp {
-            constructor() {
-                this.container = document.getElementById('survey-container');
-                if (!this.container) throw new Error('Container missing');
-
-                this.state = new SurveyState();
-                this.renderer = new SurveyRenderer(this.container, this.state);
-                this.init();
-            }
-
-            init() {
-                // CHECK PERMANENT BLOCK
-                try {
-                    const blockedStr = localStorage.getItem(CONFIG.BLOCK_KEY);
-                    if (blockedStr) {
-                        const blocked = JSON.parse(blockedStr);
-                        if (blocked && blocked.timestamp) {
-                            this.state.update({ currentScreen: 'blocked' });
-                            this.renderer.render();
-                            return;
-                        }
-                    }
-                } catch (e) {
-                    // Block check failed - continua normalmente
-                }
-
-                this.state.subscribe(() => this.renderer.render());
-                this.renderer.render();
-
-                // Prevenzione chiusura accidentale
-                window.addEventListener('beforeunload', (e) => {
-                    const state = this.state.getState();
-                    if (state.currentScreen === 'question' && !state.completed) {
-                        e.preventDefault();
-                        e.returnValue = 'Sei sicuro di voler abbandonare il sondaggio? I progressi andranno persi.';
-                        return e.returnValue;
-                    }
-                });
-
-                // Prevenzione navigazione indietro
-                window.addEventListener('popstate', () => history.pushState(null, '', location.href));
-                history.pushState(null, '', location.href);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        
+        for (const line of lines) {
+          if (line.trim().startsWith('data: ')) {
+            const data = line.trim().substring(6);
+            if (data === '[DONE]') continue;
             try {
-                window.surveyApp = new SurveyApp();
-            } catch (e) {
-                document.getElementById('survey-container').innerHTML = `
-                    <section class="screen error-screen" role="alert">
-                        <h1 class="error-title">Errore</h1>
-                        <p class="error-message">Errore caricamento. Ricarica.</p>
-                        <button class="btn btn-primary" onclick="location.reload()">Ricarica</button>
-                    </section>`;
-            }
-        });
+              const parsed = JSON.parse(data);
+              const delta = parsed.choices[0]?.delta?.content || '';
+              if (delta) {
+                fullText += delta;
+                if (assistantEl) {
+                  assistantEl.innerHTML = `<div class="markdown-content">${DOMPurify.sanitize(marked.parse(fullText))}</div>`;
+                  assistantEl.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                  });
+                  addCopyButtons();
+                }
+                scrollToBottom();
+              }
+            } catch (e) {}
+          }
+        }
+      }
+      return fullText;
+    }
 
-        document.addEventListener('submit', e => {
-            if (!e.target.id || e.target.id !== 'q-form') e.preventDefault();
-        });
-    </script>
+    function scrollToBottom(force = false) {
+      const container = document.getElementById('chat-container');
+      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 150;
+      if (force || isNearBottom) {
+        container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+      }
+    }
+
+    function copyMessage(idx) {
+      const msg = getActiveChat().messages[idx];
+      navigator.clipboard.writeText(msg.content);
+      showToast('Copiato negli appunti!', 'success');
+    }
+
+    async function regenerate(idx) {
+      const chat = getActiveChat();
+      const oldMsg = chat.messages[idx];
+      if (oldMsg.role !== 'assistant') return;
+      
+      let userMsgIndex = -1;
+      for (let i = idx - 1; i >= 0; i--) {
+        if (chat.messages[i].role === 'user') {
+          userMsgIndex = i;
+          break;
+        }
+      }
+      if (userMsgIndex === -1) return;
+
+      chat.messages.splice(idx, 1);
+      
+      const newAssistantMessage = {
+        role: 'assistant',
+        content: '',
+        modelId: oldMsg.modelId,
+        timestamp: Date.now(),
+        isStreaming: true
+      };
+      chat.messages.splice(idx, 0, newAssistantMessage);
+      saveState();
+      renderMessages();
+      scrollToBottom(true);
+
+      const apiMessages = formatMessagesForAPI(chat.messages.slice(0, idx + 1));
+      
+      try {
+        const fullText = await streamGroq(apiMessages, oldMsg.modelId);
+        newAssistantMessage.content = fullText;
+        newAssistantMessage.isStreaming = false;
+        saveState();
+        renderMessages();
+      } catch (error) {
+        newAssistantMessage.content = `⚠️ Errore: ${error.message}`;
+        newAssistantMessage.isStreaming = false;
+        newAssistantMessage.hasError = true;
+        saveState();
+        renderMessages();
+      }
+    }
+
+    function showRetryMenu(event, idx) {
+      event.stopPropagation();
+      const existing = document.querySelector('.retry-menu');
+      if (existing) existing.remove();
+
+      const menu = document.createElement('div');
+      menu.className = 'retry-menu';
+      menu.style.top = `${event.clientY}px`;
+      menu.style.left = `${event.clientX}px`;
+
+      MODELS.forEach(m => {
+        if (m.id !== state.selectedModelId) {
+          const btn = document.createElement('button');
+          btn.textContent = m.displayName;
+          btn.className = 'retry-menu-item';
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            retryWithModel(idx, m.id);
+            menu.remove();
+          };
+          menu.appendChild(btn);
+        }
+      });
+
+      document.body.appendChild(menu);
+
+      const closeMenu = () => {
+        menu.remove();
+        document.removeEventListener('click', closeMenu);
+      };
+      setTimeout(() => document.addEventListener('click', closeMenu), 0);
+    }
+
+    async function retryWithModel(idx, newModelId) {
+      const chat = getActiveChat();
+      const oldMsg = chat.messages[idx];
+      if (oldMsg.role !== 'assistant') return;
+      
+      chat.messages.splice(idx, 1);
+      
+      const newAssistantMessage = {
+        role: 'assistant',
+        content: '',
+        modelId: newModelId,
+        timestamp: Date.now(),
+        isStreaming: true
+      };
+      chat.messages.splice(idx, 0, newAssistantMessage);
+      
+      const prevSelected = state.selectedModelId;
+      state.selectedModelId = newModelId;
+      saveState();
+      renderMessages();
+      scrollToBottom(true);
+
+      const apiMessages = formatMessagesForAPI(chat.messages.slice(0, idx + 1));
+      
+      try {
+        const fullText = await streamGroq(apiMessages, newModelId);
+        newAssistantMessage.content = fullText;
+        newAssistantMessage.isStreaming = false;
+        saveState();
+        renderMessages();
+      } catch (error) {
+        newAssistantMessage.content = `⚠️ Errore: ${error.message}`;
+        newAssistantMessage.isStreaming = false;
+        newAssistantMessage.hasError = true;
+        saveState();
+        renderMessages();
+      } finally {
+        state.selectedModelId = prevSelected;
+        document.getElementById('model-selector').value = prevSelected;
+      }
+    }
+
+    // Settings & UI Utils
+    function openSettings() {
+      document.getElementById('settings-modal').style.display = 'flex';
+      document.getElementById('api-key-input').value = state.apiKey;
+    }
+
+    function closeSettings() {
+      document.getElementById('settings-modal').style.display = 'none';
+    }
+
+    function saveSettings() {
+      state.apiKey = document.getElementById('api-key-input').value.trim();
+      localStorage.setItem('groq_api_key', state.apiKey);
+      closeSettings();
+      showToast('Impostazioni salvate!', 'success');
+    }
+
+    function toggleTheme() {
+      state.theme = state.theme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', state.theme);
+      if (state.theme === 'light') document.documentElement.classList.remove('dark');
+      else document.documentElement.classList.add('dark');
+    }
+
+    function clearAllData() {
+      if (!confirm('Sei sicuro di voler cancellare tutto?')) return;
+      localStorage.clear();
+      location.reload();
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function showToast(message, type = 'error') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+  </script>
 </body>
 </html>
+
